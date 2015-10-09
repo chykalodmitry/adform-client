@@ -2,14 +2,17 @@
 
 namespace DMP;
 
+use MyCLabs\Enum\Enum;
+
 /**
- * Class Pricing
+ * @method static Pricing MAX()
+ * @method static Pricing SUM()
  */
-class Pricing extends \SplEnum
+class Pricing extends Enum
 {
 
     const __default = self::MAX;
 
-    const MAX = 'Max';
-    const SUM = 'Sum';
+    const MAX = 'max';
+    const SUM = 'sum';
 }
