@@ -17,7 +17,7 @@
         $adform = new Audiens\AdForm\Client($username, $password, $cache);
 
     } catch (Audiens\AdForm\Exception\OauthException $e) {
-        exit("AdForm Auth failed with message: ".$e->getMessage());
+        exit($e->getMessage());
     }
 
     // Get 10 categories
