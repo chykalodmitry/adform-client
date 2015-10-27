@@ -8,7 +8,7 @@ A PHP client library for [AdForm's DMP API](https://dmp.adform.com/help/).
 # Installation Using [Composer](http://getcomposer.org/)
 
 ```bash
-composer require Audiens/adform-client
+$ composer require Audiens/adform-client
 ```
 
 # Available endpoints
@@ -19,7 +19,8 @@ The current implementation covers the following endpoints:
 
 # Usage
 
-```require 'vendor/autoload.php';
+```php
+require 'vendor/autoload.php';
 
 $username = '{yourUsername}';
 $password = '{yourPassword}';
@@ -50,7 +51,7 @@ More examples are available in the examples dir.
 
 The package has an optional ability to cache the API call locally. Two cache drivers are available, Redis and File.
 
-```
+```php
 require 'vendor/autoload.php';
 
 $username = '{yourUsername}';
@@ -77,9 +78,8 @@ try {
 } catch (Audiens\AdForm\Exception\OauthException $e) {
     exit("Auth failed with message: ".$e->getMessage());
 }
-
 ```
 
 # License
 
-Package is licensed undet the MIT license.
+The MIT License (MIT). Please see LICENSE for more information.
