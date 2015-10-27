@@ -5,6 +5,7 @@ namespace Audiens\AdForm\Enum;
 use MyCLabs\Enum\Enum;
 
 /**
+ * Class SegmentStatus
  */
 class SegmentStatus extends Enum
 {

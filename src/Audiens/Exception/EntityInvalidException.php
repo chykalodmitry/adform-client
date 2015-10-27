@@ -15,9 +15,13 @@ class EntityInvalidException extends SeverityAwareException
     protected $errors;
 
     /**
-     * @param string $message
-     * @param int $code
-     * @param object $response The response body
+     * @param string     $message
+     * @param int        $code
+     * @param array      $errors
+     * @param \Exception $previous
+     * @param int        $severityLevel
+     *
+     * @internal param object $response The response body
      */
     public function __construct($message = '', $code = 0, $errors = [], \Exception $previous = null, $severityLevel = self::SEVERITY_INFO)
     {
@@ -28,8 +32,10 @@ class EntityInvalidException extends SeverityAwareException
 
     /**
      * @param  string $message error message
-     * @param  int $code
-     * @param  array $errors validation errors
+     * @param  int    $code
+     * @param  array  $errors  validation errors
+     *
+     * @return EntityInvalidException
      */
     public static function invalid($message, $code, $errors)
     {

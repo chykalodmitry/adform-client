@@ -43,7 +43,7 @@ class SegmentProvider
      *
      * @param int $segmentId ID of the category
      *
-     * @throws EntityNotFoundException if the API call fails
+     * @throws Exception\EntityNotFoundException if the API call fails
      *
      * @return Segment
      */
@@ -85,7 +85,7 @@ class SegmentProvider
      * @param int $limit
      * @param int $offset
      *
-     * @throws ApiException if the API call fails
+     * @throws Exception\ApiException if the API call fails
      *
      * @return array
      */
@@ -125,7 +125,7 @@ class SegmentProvider
             foreach ($classArray as $class) {
                 $segments[] = SegmentHydrator::fromStdClass($class);
             }
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (ClientException $e) {
             $response = $e->getResponse();
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
@@ -143,7 +143,7 @@ class SegmentProvider
      * @param int $limit
      * @param int $offset
      *
-     * @throws ApiException if the API call fails
+     * @throws Exception\ApiException if the API call fails
      *
      * @return array
      */
@@ -183,7 +183,7 @@ class SegmentProvider
             foreach ($classArray as $class) {
                 $segments[] = SegmentHydrator::fromStdClass($class);
             }
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (ClientException $e) {
             $response = $e->getResponse();
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
@@ -197,18 +197,18 @@ class SegmentProvider
     /**
      * Returns an array of segments for a Category
      *
-     * @param int $segmentId
+     * @param int $categoryId
      * @param int $limit
      * @param int $offset
      *
-     * @throws ApiException if the API call fails
+     * @throws Exception\ApiException if the API call fails
      *
      * @return array
      */
-    public function getItemsCategory($segmentId, $limit = 1000, $offset = 0)
+    public function getItemsCategory($categoryId, $limit = 1000, $offset = 0)
     {
         // Endpoint URI
-        $uri = sprintf('v1/categories/%d/segments', $segmentId);
+        $uri = sprintf('v1/categories/%d/segments', $categoryId);
 
         $options = [
             'query' => [
@@ -241,7 +241,7 @@ class SegmentProvider
             foreach ($classArray as $class) {
                 $segments[] = SegmentHydrator::fromStdClass($class);
             }
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (ClientException $e) {
             $response = $e->getResponse();
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
@@ -259,7 +259,7 @@ class SegmentProvider
      * @param int $limit
      * @param int $offset
      *
-     * @throws ApiException if the API call fails
+     * @throws Exception\ApiException if the API call fails
      *
      * @return array
      */
@@ -299,7 +299,7 @@ class SegmentProvider
             foreach ($classArray as $class) {
                 $segments[] = SegmentHydrator::fromStdClass($class);
             }
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (ClientException $e) {
             $response = $e->getResponse();
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
@@ -315,8 +315,8 @@ class SegmentProvider
      *
      * @param Segment $segment
      *
-     * @throws EntityInvalidException if the API returns a validation error
-     * @throws ApiException if the API call fails
+     * @throws Exception\EntityInvalidException if the API returns a validation error
+     * @throws Exception\ApiException if the API call fails
      *
      * @return Segment
      */
@@ -339,7 +339,7 @@ class SegmentProvider
             }
 
             return $segment;
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (ClientException $e) {
             $response = $e->getResponse();
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
@@ -353,7 +353,6 @@ class SegmentProvider
             }
         }
 
-        return false;
     }
 
     /**
@@ -361,8 +360,8 @@ class SegmentProvider
      *
      * @param Segment $segment
      *
-     * @throws EntityInvalidException if the API returns a validation error
-     * @throws ApiException if the API call fails
+     * @throws Exception\EntityInvalidException if the API returns a validation error
+     * @throws Exception\ApiException if the API call fails
      *
      * @return Segment
      */
@@ -385,7 +384,7 @@ class SegmentProvider
             }
 
             return $segment;
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (ClientException $e) {
             $response = $e->getResponse();
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
@@ -399,7 +398,6 @@ class SegmentProvider
             }
         }
 
-        return false;
     }
 
     /**
@@ -407,7 +405,7 @@ class SegmentProvider
      *
      * @param Segment $segment
      *
-     * @throws ApiException if the API call fails
+     * @throws Exception\ApiException if the API call fails
      *
      * @return Segment
      */
@@ -424,7 +422,7 @@ class SegmentProvider
             }
 
             return true;
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (ClientException $e) {
             $response = $e->getResponse();
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
@@ -432,6 +430,5 @@ class SegmentProvider
             throw Exception\ApiException::translate($responseBody, $responseCode);
         }
 
-        return false;
     }
 }

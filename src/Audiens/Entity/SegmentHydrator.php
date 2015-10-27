@@ -13,7 +13,7 @@ class SegmentHydrator extends Segment
      * Hydrate a segment from a stdClass, intended to be used for
      * instancing a segment from json_decode()
      *
-     * @param stdClass $stdClass
+     * @param \stdClass $stdClass
      *
      * @return Segment
      */

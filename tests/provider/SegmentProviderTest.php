@@ -11,6 +11,7 @@ use Audiens\AdForm\Enum\SegmentStatus;
  */
 class SegmentProviderTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var Client */
     private $client;
 
     private $fixtures = [];
@@ -92,6 +93,25 @@ class SegmentProviderTest extends \PHPUnit_Framework_TestCase
         $segments = $this->client->segments()->getItemsDataProvider(SANDBOX_DATA_PROVIDER_ID, 1);
 
         $this->assertInternalType('array', $segments);
+
+        list($segment) = $segments;
+
+        $this->assertInstanceOf(Segment::class, $segment);
+    }
+
+
+    /**
+     * @test
+     */
+    public function getItemsCategoryWillReturnAnArrayOfSegments()
+    {
+
+        $categories = $this->client->categories()->getItemsDataProvider(SANDBOX_DATA_PROVIDER_ID,1);
+
+        $segments = $this->client->segments()->getItemsCategory($categories[0]->getId(), 2);
+
+        $this->assertInternalType('array', $segments);
+        $this->assertNotEmpty($segments);
 
         list($segment) = $segments;
 

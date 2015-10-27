@@ -8,7 +8,7 @@ use League\Flysystem\Adapter\Local;
 class FileCache extends BaseCache implements CacheInterface
 {
     /**
-     * @var Flysystem
+     * @var Filesystem
      */
     private $filesystem;
 
@@ -23,8 +23,9 @@ class FileCache extends BaseCache implements CacheInterface
     protected $prefix;
 
     /**
-     * @param array $config
-     * @param int $ttl
+     * @param        $path
+     * @param int    $ttl
+     * @param string $prefix
      */
     public function __construct($path, $ttl = 3600, $prefix = "adform_")
     {
@@ -37,20 +38,24 @@ class FileCache extends BaseCache implements CacheInterface
     }
 
     /**
-     * @param string $uri
-     * @param string $query
-     * @param string $data
+     * @param $uri
+     * @param $query
+     * @param $data
+     *
+     * @return bool
      */
     public function put($uri, $query, $data)
     {
         $hash = $this->getHash($uri, $query);
 
-        $this->filesystem->put($hash, json_encode($data));
+        return $this->filesystem->put($hash, json_encode($data));
     }
 
     /**
-     * @param string $uri
-     * @param string $query
+     * @param $uri
+     * @param $query
+     *
+     * @return bool|mixed
      */
     public function get($uri, $query)
     {
@@ -69,13 +74,15 @@ class FileCache extends BaseCache implements CacheInterface
     }
 
     /**
-     * @param string $uri
-     * @param string $query
+     * @param $uri
+     * @param $query
+     *
+     * @return bool
      */
     public function delete($uri, $query)
     {
         $hash = $this->getHash($uri, $query);
 
-        $this->filesystem->delete($hash);
+        return $this->filesystem->delete($hash);
     }
 }

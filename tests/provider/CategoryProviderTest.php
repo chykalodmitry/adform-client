@@ -10,6 +10,7 @@ use Audiens\AdForm\Entity\Category;
  */
 class CategoryProviderTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var Client */
     private $client;
 
     private $fixtures = [];

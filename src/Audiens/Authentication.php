@@ -5,6 +5,7 @@ namespace Audiens\AdForm;
 use Audiens\AdForm\Exception\OauthException;
 use \League\OAuth2\Client\Provider\GenericProvider;
 use \League\OAuth2\Client\Provider\Exception\IdentityProviderException;
+use League\OAuth2\Client\Token\AccessToken;
 
 /**
  * Class Autentication

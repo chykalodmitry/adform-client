@@ -43,7 +43,7 @@ class CategoryProvider
      *
      * @param int $categoryId ID of the category
      *
-     * @throws EntityNotFoundException if the API call fails
+     * @throws Exception\EntityNotFoundException if the API call fails
      *
      * @return Category
      */
@@ -85,7 +85,7 @@ class CategoryProvider
      * @param int $limit
      * @param int $offset
      *
-     * @throws ApiException if the API call fails
+     * @throws Exception\ApiException if the API call fails
      *
      * @return array
      */
@@ -125,7 +125,7 @@ class CategoryProvider
             foreach ($classArray as $class) {
                 $categories[] = CategoryHydrator::fromStdClass($class);
             }
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (ClientException $e) {
             $response = $e->getResponse();
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
@@ -143,7 +143,7 @@ class CategoryProvider
      * @param int $limit
      * @param int $offset
      *
-     * @throws ApiException if the API call fails
+     * @throws Exception\ApiException if the API call fails
      *
      * @return array
      */
@@ -183,7 +183,7 @@ class CategoryProvider
             foreach ($classArray as $class) {
                 $categories[] = CategoryHydrator::fromStdClass($class);
             }
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (ClientException $e) {
             $response = $e->getResponse();
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
@@ -201,7 +201,7 @@ class CategoryProvider
      * @param int $limit
      * @param int $offset
      *
-     * @throws ApiException if the API call fails
+     * @throws Exception\ApiException if the API call fails
      *
      * @return array
      */
@@ -241,7 +241,7 @@ class CategoryProvider
             foreach ($classArray as $class) {
                 $categories[] = CategoryHydrator::fromStdClass($class);
             }
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (ClientException $e) {
             $response = $e->getResponse();
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
@@ -257,8 +257,8 @@ class CategoryProvider
      *
      * @param Category $category
      *
-     * @throws EntityInvalidException if the API returns a validation error
-     * @throws ApiException if the API call fails
+     * @throws Exception\EntityInvalidException if the API returns a validation error
+     * @throws Exception\ApiException if the API call fails
      *
      * @return Category
      */
@@ -281,7 +281,8 @@ class CategoryProvider
             }
 
             return $category;
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+
+        } catch (ClientException $e) {
             $response = $e->getResponse();
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
@@ -295,7 +296,6 @@ class CategoryProvider
             }
         }
 
-        return false;
     }
 
     /**
@@ -303,8 +303,8 @@ class CategoryProvider
      *
      * @param Category $category
      *
-     * @throws EntityInvalidException if the API returns a validation error
-     * @throws ApiException if the API call fails
+     * @throws Exception\EntityInvalidException if the API returns a validation error
+     * @throws Exception\ApiException if the API call fails
      *
      * @return Category
      */
@@ -327,7 +327,7 @@ class CategoryProvider
             }
 
             return $category;
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (ClientException $e) {
             $response = $e->getResponse();
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
@@ -341,7 +341,6 @@ class CategoryProvider
             }
         }
 
-        return false;
     }
 
     /**
@@ -349,7 +348,7 @@ class CategoryProvider
      *
      * @param Category $category
      *
-     * @throws ApiException if the API call fails
+     * @throws Exception\ApiException if the API call fails
      *
      * @return Category
      */
@@ -366,7 +365,7 @@ class CategoryProvider
             }
 
             return true;
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (ClientException $e) {
             $response = $e->getResponse();
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
@@ -374,6 +373,5 @@ class CategoryProvider
             throw Exception\ApiException::translate($responseBody, $responseCode);
         }
 
-        return false;
     }
 }
