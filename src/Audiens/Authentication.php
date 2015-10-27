@@ -2,6 +2,7 @@
 
 namespace Audiens\AdForm;
 
+use Audiens\AdForm\Exception\OauthException;
 use \League\OAuth2\Client\Provider\GenericProvider;
 use \League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 
@@ -55,7 +56,7 @@ class Authentication
                 'password' => $this->password
             ]);
         } catch (IdentityProviderException $e) {
-            throw new Exception\OauthException($e->getMessage());
+            throw OauthException::connect($e->getMessage());
         }
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Audiens\AdForm\Entities;
+namespace Audiens\AdForm\Entity;
 
 use JsonSerializable;
 

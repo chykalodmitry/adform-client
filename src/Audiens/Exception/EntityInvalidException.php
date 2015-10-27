@@ -5,8 +5,10 @@ namespace Audiens\AdForm\Exception;
 /**
  * Exception thrown if an entity storage operation fails
  */
-class EntityInvalidException extends \Exception
+class EntityInvalidException extends SeverityAwareException
 {
+    const MESSAGE = 'Entity failed validation: %s';
+
     /**
      * @var mixed
      */
@@ -17,10 +19,27 @@ class EntityInvalidException extends \Exception
      * @param int $code
      * @param object $response The response body
      */
-    public function __construct($message, $code, $errors)
+    public function __construct($message = '', $code = 0, $errors = [], \Exception $previous = null, $severityLevel = self::SEVERITY_INFO)
     {
+        parent::__construct($message, $code, $previous, $severityLevel);
+
         $this->errors = (array)$errors;
-        parent::__construct($message, $code);
+    }
+
+    /**
+     * @param  string $message error message
+     * @param  int $code
+     * @param  array $errors validation errors
+     */
+    public static function invalid($message, $code, $errors)
+    {
+        return new self (
+            sprintf(self::MESSAGE, $message),
+            $code,
+            $errors,
+            null,
+            SeverityAwareException::SEVERITY_CRITICAL
+        );
     }
 
     /**

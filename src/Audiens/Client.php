@@ -2,6 +2,11 @@
 
 namespace Audiens\AdForm;
 
+use Audiens\AdForm\Cache\CacheInterface;
+use Audiens\AdForm\Provider\CategoryProvider;
+use Audiens\AdForm\Provider\SegmentProvider;
+use Audiens\AdForm\Provider\RevenueProvider;
+
 /**
  * Class Adform
  *
@@ -34,6 +39,26 @@ class Client
     protected $httpClient;
 
     /**
+     * @var CacheInterface
+     */
+    protected $cache;
+
+    /**
+     * @var CategoryProvider
+     */
+    protected $categories;
+
+    /**
+     * @var SegmentProvider
+     */
+    protected $segments;
+
+    /**
+     * @var RevenueProvider
+     */
+    protected $revenue;
+
+    /**
      * Constructor.
      *
      * @param string $username
@@ -46,8 +71,34 @@ class Client
 
         $this->httpClient = new HttpClient($this->auth);
 
-        // providers for entity types
-        $this->categories = new CategoryProvider($this->httpClient);
-        //$this->segments = new Segments($this->httpClient);
+        $this->cache = $cache;
+    }
+
+    /**
+     * A proxy method for working with categories
+     *
+     * @return CategoryProvider
+     */
+    public function categories()
+    {
+        if (is_null($this->categories)) {
+            $this->categories = new CategoryProvider($this->httpClient, $this->cache);
+        }
+
+        return $this->categories;
+    }
+
+    /**
+     * A proxy method for working with segments
+     *
+     * @return SegmentProvider
+     */
+    public function segments()
+    {
+        if (is_null($this->segments)) {
+            $this->segments = new SegmentProvider($this->httpClient, $this->cache);
+        }
+
+        return $this->segments;
     }
 }

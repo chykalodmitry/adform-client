@@ -30,7 +30,7 @@ class RedisCache extends BaseCache implements CacheInterface
         try {
             $this->client = new Predis\Client($config);
         } catch (Predis\Response\ServerException $e) {
-            throw new Exception\RedisException($e->getMessage());
+            throw Exception\RedisException::connect($e->getMessage());
         }
 
         $this->ttl = $ttl;

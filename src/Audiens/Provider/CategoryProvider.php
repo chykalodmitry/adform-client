@@ -1,9 +1,12 @@
 <?php
 
-namespace Audiens\AdForm;
+namespace Audiens\AdForm\Provider;
 
-use Audiens\AdForm\Entities\Category;
-use Audiens\AdForm\Entities\CategoryHydrator;
+use Audiens\AdForm\Entity\Category;
+use Audiens\AdForm\Entity\CategoryHydrator;
+use Audiens\AdForm\HttpClient;
+use Audiens\AdForm\Exception;
+use Audiens\AdForm\Cache\CacheInterface;
 use GuzzleHttp\Exception\ClientException;
 
 /**
@@ -19,13 +22,20 @@ class CategoryProvider
     protected $httpClient;
 
     /**
+     * @var CacheInterface
+     */
+    protected $cache;
+
+    /**
      * Constructor.
      *
      * @param HttpClient $httpClient
      */
-    public function __construct(HttpClient $httpClient)
+    public function __construct(HttpClient $httpClient, CacheInterface $cache = null)
     {
         $this->httpClient = $httpClient;
+
+        $this->cache = $cache;
     }
 
     /**
@@ -43,15 +53,29 @@ class CategoryProvider
         $uri = sprintf('v1/categories/%d', $categoryId);
 
         try {
-            $response = $this->httpClient->get($uri);
+            $data = null;
 
-            return CategoryHydrator::fromStdClass(json_decode($response->getBody()->getContents()));
+            // try to get from cache
+            if ($this->cache) {
+                $data = $this->cache->get($uri, []);
+            }
+
+            // load from API
+            if (!$data) {
+                $data = $this->httpClient->get($uri)->getBody()->getContents();
+
+                if ($this->cache and $data) {
+                    $this->cache->put($uri, [], $data);
+                }
+            }
+
+            return CategoryHydrator::fromStdClass(json_decode($data));
         } catch (ClientException $e) {
             $response = $e->getResponse();
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw new Exception\EntityNotFoundException($responseBody, $responseCode);
+            throw Exception\EntityNotFoundException::translate($categoryId, $responseBody, $responseCode);
         }
     }
 
@@ -80,9 +104,23 @@ class CategoryProvider
         $categories = [];
 
         try {
-            $response = $this->httpClient->get($uri, $options);
+            $data = null;
 
-            $classArray = json_decode($response->getBody()->getContents());
+            // try to get from cache
+            if ($this->cache) {
+                $data = $this->cache->get($uri, $options);
+            }
+
+            // load from API
+            if (!$data) {
+                $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
+
+                if ($this->cache and $data) {
+                    $this->cache->put($uri, [], $data);
+                }
+            }
+
+            $classArray = json_decode($data);
 
             foreach ($classArray as $class) {
                 $categories[] = CategoryHydrator::fromStdClass($class);
@@ -92,7 +130,7 @@ class CategoryProvider
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw new Exception\ApiException($responseBody, $responseCode);
+            throw Exception\ApiException::translate($responseBody, $responseCode);
         }
 
         return $categories;
@@ -124,9 +162,23 @@ class CategoryProvider
         $categories = [];
 
         try {
-            $response = $this->httpClient->get($uri, $options);
+            $data = null;
 
-            $classArray = json_decode($response->getBody()->getContents());
+            // try to get from cache
+            if ($this->cache) {
+                $data = $this->cache->get($uri, $options);
+            }
+
+            // load from API
+            if (!$data) {
+                $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
+
+                if ($this->cache and $data) {
+                    $this->cache->put($uri, [], $data);
+                }
+            }
+
+            $classArray = json_decode($data);
 
             foreach ($classArray as $class) {
                 $categories[] = CategoryHydrator::fromStdClass($class);
@@ -136,7 +188,7 @@ class CategoryProvider
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw new Exception\ApiException($responseBody, $responseCode);
+            throw Exception\ApiException::translate($responseBody, $responseCode);
         }
 
         return $categories;
@@ -168,9 +220,23 @@ class CategoryProvider
         $categories = [];
 
         try {
-            $response = $this->httpClient->get($uri, $options);
+            $data = null;
 
-            $classArray = json_decode($response->getBody()->getContents());
+            // try to get from cache
+            if ($this->cache) {
+                $data = $this->cache->get($uri, $options);
+            }
+
+            // load from API
+            if (!$data) {
+                $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
+
+                if ($this->cache and $data) {
+                    $this->cache->put($uri, [], $data);
+                }
+            }
+
+            $classArray = json_decode($data);
 
             foreach ($classArray as $class) {
                 $categories[] = CategoryHydrator::fromStdClass($class);
@@ -180,7 +246,7 @@ class CategoryProvider
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw new Exception\ApiException($responseBody, $responseCode);
+            throw Exception\ApiException::translate($responseBody, $responseCode);
         }
 
         return $categories;
@@ -206,9 +272,15 @@ class CategoryProvider
         ];
 
         try {
-            $response = $this->httpClient->post($uri, $options);
+            $data = $this->httpClient->post($uri, $options)->getBody()->getContents();
 
-            return CategoryHydrator::fromStdClass(json_decode($response->getBody()->getContents()));
+            $category = CategoryHydrator::fromStdClass(json_decode($data));
+
+            if ($this->cache and $data) {
+                $this->cache->put($uri.'/'.$category->getId(), [], $data);
+            }
+
+            return $category;
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             $response = $e->getResponse();
             $responseBody = $response->getBody()->getContents();
@@ -217,9 +289,9 @@ class CategoryProvider
             $error = json_decode($responseBody);
 
             if (property_exists($error, 'modelState')) { // validation error
-                throw new Exception\EntityInvalidException($responseBody, $responseCode, $error->modelState);
+                throw Exception\EntityInvalidException::invalid($responseBody, $responseCode, $error->modelState);
             } else { // general error
-                throw new Exception\ApiException($responseBody, $responseCode);
+                throw Exception\ApiException::translate($responseBody, $responseCode);
             }
         }
 
@@ -246,9 +318,15 @@ class CategoryProvider
         ];
 
         try {
-            $response = $this->httpClient->put($uri, $options);
+            $data = $this->httpClient->put($uri, $options)->getBody()->getContents();
 
-            return CategoryHydrator::fromStdClass(json_decode($response->getBody()->getContents()));
+            $category = CategoryHydrator::fromStdClass(json_decode($data));
+
+            if ($this->cache and $data) {
+                $this->cache->put($uri.'/'.$category->getId(), [], $data);
+            }
+
+            return $category;
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             $response = $e->getResponse();
             $responseBody = $response->getBody()->getContents();
@@ -257,9 +335,9 @@ class CategoryProvider
             $error = json_decode($responseBody);
 
             if (property_exists($error, 'modelState')) { // validation error
-                throw new Exception\EntityInvalidException($responseBody, $responseCode, $error->modelState);
+                throw Exception\EntityInvalidException::invalid($responseBody, $responseCode, $error->modelState);
             } else { // general error
-                throw new Exception\ApiException($responseBody, $responseCode);
+                throw Exception\ApiException::translate($responseBody, $responseCode);
             }
         }
 
@@ -283,13 +361,17 @@ class CategoryProvider
         try {
             $response = $this->httpClient->delete($uri);
 
+            if ($this->cache) {
+                $this->cache->delete($uri.'/'.$category->getId(), []);
+            }
+
             return true;
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             $response = $e->getResponse();
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw new Exception\ApiException($responseBody, $responseCode);
+            throw Exception\ApiException::translate($responseBody, $responseCode);
         }
 
         return false;

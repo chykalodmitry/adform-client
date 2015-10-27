@@ -3,11 +3,11 @@
 namespace Audiens\AdForm\Exception;
 
 /**
- * Exception thrown if Oauth authentication fails
+ * Exception thrown if Redis fails
  */
-class OauthException extends SeverityAwareException
+class RedisException extends SeverityAwareException
 {
-    const MESSAGE = 'AdForm Authentication failed with message: %s';
+    const MESSAGE = 'Redis connection failed with message: %s';
 
     public static function connect($message)
     {
