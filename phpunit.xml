@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit backupGlobals="false"
          backupStaticAttributes="false"
-         bootstrap="vendor/autoload.php"
+         bootstrap="phpunit.php"
          colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          processIsolation="false"
-         stopOnFailure="false"
+         stopOnFailure="true"
          syntaxCheck="false"
         >
 
     <testsuites>
-        <testsuite name="DMP testsuite">
-            <directory>./tests/dmp-client</directory>
+        <testsuite name="AdForm">
+            <directory>./tests</directory>
         </testsuite>
     </testsuites>
 
