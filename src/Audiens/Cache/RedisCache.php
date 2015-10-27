@@ -2,6 +2,7 @@
 
 namespace Audiens\AdForm\Cache;
 
+use Audiens\AdForm\Exception\RedisException;
 use Predis;
 
 class RedisCache extends BaseCache implements CacheInterface
@@ -22,15 +23,18 @@ class RedisCache extends BaseCache implements CacheInterface
     protected $prefix;
 
     /**
-     * @param array $config
-     * @param int $ttl
+     * @param        $config
+     * @param int    $ttl
+     * @param string $prefix
+     *
+     * @throws RedisException
      */
     public function __construct($config, $ttl = 3600, $prefix = "adform_")
     {
         try {
             $this->client = new Predis\Client($config);
         } catch (Predis\Response\ServerException $e) {
-            throw Exception\RedisException::connect($e->getMessage());
+            throw RedisException::connect($e->getMessage());
         }
 
         $this->ttl = $ttl;
@@ -49,7 +53,7 @@ class RedisCache extends BaseCache implements CacheInterface
     {
         $hash = $this->getHash($uri, $query);
 
-        return $this->client->set($hash, json_encode($data), "ex", $this->ttl);
+        return (bool) $this->client->set($hash, json_encode($data), "ex", $this->ttl);
     }
 
     /**
@@ -72,13 +76,15 @@ class RedisCache extends BaseCache implements CacheInterface
     }
 
     /**
-     * @param string $uri
-     * @param string $query
+     * @param $uri
+     * @param $query
+     *
+     * @return bool
      */
     public function delete($uri, $query)
     {
         $hash = $this->getHash($uri, $query);
 
-        $this->client->del($hash);
+        return (bool) $this->client->del($hash);
     }
 }

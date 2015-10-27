@@ -2,6 +2,7 @@
 
 namespace Audiens\AdForm\Entity;
 
+use Audiens\AdForm\Enum\SegmentStatus;
 use JsonSerializable;
 
 /**
@@ -100,21 +101,29 @@ class Segment implements JsonSerializable
     protected $hasDataUsagePermissions;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     protected $updatedAt;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     protected $createdAt;
 
     /**
-     * Constructor.
+     * @return \DateTime
      */
-    public function __construct()
+    public function getUpdatedAt()
     {
+        return $this->updatedAt;
+    }
 
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
     }
 
     /**
@@ -154,7 +163,7 @@ class Segment implements JsonSerializable
     }
 
     /**
-     * @param int $dataProviderId
+     * @param int $status
      *
      * @return Segment
      */

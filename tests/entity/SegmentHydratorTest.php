@@ -2,6 +2,9 @@
 
 namespace Audiens\AdForm\Tests\Entity;
 
+use Audiens\AdForm\Entity\Segment;
+use Audiens\AdForm\Entity\SegmentHydrator;
+
 /**
  * Class OauthClient
  *
@@ -36,8 +39,8 @@ class SegmentHydratorTest extends \PHPUnit_Framework_TestCase
         $stdClass->createdAt = '2015-10-10';
         $stdClass->updatedAt = '2015-10-10';
 
-        $segment = \Audiens\AdForm\Entity\SegmentHydrator::fromStdClass($stdClass);
+        $segment = SegmentHydrator::fromStdClass($stdClass);
 
-        $this->assertInstanceOf(\Audiens\AdForm\Entity\Segment::class, $segment);
+        $this->assertInstanceOf(Segment::class, $segment);
     }
 }

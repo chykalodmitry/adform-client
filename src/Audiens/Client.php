@@ -5,7 +5,6 @@ namespace Audiens\AdForm;
 use Audiens\AdForm\Cache\CacheInterface;
 use Audiens\AdForm\Provider\CategoryProvider;
 use Audiens\AdForm\Provider\SegmentProvider;
-use Audiens\AdForm\Provider\RevenueProvider;
 
 /**
  * Class Adform

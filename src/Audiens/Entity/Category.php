@@ -30,21 +30,29 @@ class Category implements JsonSerializable
     protected $parentId;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     protected $updatedAt;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     protected $createdAt;
 
     /**
-     * Constructor.
+     * @return \DateTime
      */
-    public function __construct()
+    public function getUpdatedAt()
     {
+        return $this->updatedAt;
+    }
 
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
     }
 
     /**

@@ -20,7 +20,7 @@ class SeverityAwareException extends \Exception
     /**
      * @param string $message error message
      * @param integer $code error code
-     * @param Exception $previous
+     * @param \Exception $previous
      * @param int $severityLevel
      */
     public function __construct($message = '', $code = 0, \Exception $previous = null, $severityLevel = self::SEVERITY_INFO)

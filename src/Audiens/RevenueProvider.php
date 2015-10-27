@@ -2,9 +2,8 @@
 
 namespace Audiens\AdForm;
 
-use Audiens\AdForm\Entity\Category;
-use Audiens\AdForm\Entity\CategoryHydrator;
-use GuzzleHttp\Exception\ClientException;
+use Audiens\AdForm\Cache\CacheInterface;
+use Audiens\AdForm\Exception\ApiException;
 
 /**
  * Class RevenueProvider
@@ -24,11 +23,10 @@ class RevenueProvider
     protected $cache;
 
     /**
-     * Constructor.
-     *
-     * @param HttpClient $httpClient
+     * @param HttpClient          $httpClient
+     * @param CacheInterface|null $cache
      */
-    public function __construct(HttpClient $httpClient, Cache\CacheInterface $cache = null)
+    public function __construct(HttpClient $httpClient, CacheInterface $cache = null)
     {
         $this->httpClient = $httpClient;
 

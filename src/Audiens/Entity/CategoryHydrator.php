@@ -11,7 +11,7 @@ class CategoryHydrator extends Category
      * Hydrate a category from a stdClass, intended to be used for
      * instancing a category from json_decode()
      *
-     * @param stdClass $stdClass
+     * @param \stdClass $stdClass
      *
      * @return Category
      */

@@ -21,22 +21,25 @@
     }
 
     // Get 10 segments
+    /** @var \Audiens\AdForm\Entity\Segment[] $segments */
     $segments = $adform->segments()->getItems(2);
     foreach ($segments as $segment) {
-        echo $segments->getName()."\n";
+        echo $segment->getName()."\n";
     }
 
     // Get 10 segments for your data provider
+    /** @var \Audiens\AdForm\Entity\Segment[] $segments */
     $segments = $adform->segments()->getItemsDataProvider($dataProviderId, 10);
-    foreach ($segments as $segments) {
-        echo $segments->getName()."\n";
+    foreach ($segments as $segment) {
+        echo $segment->getName()."\n";
     }
 
     // Get 10 segments from a category
     $categoryId = '{categoryId}';
+    /** @var \Audiens\AdForm\Entity\Segment[] $segments */
     $segments = $adform->segments()->getItemsDataProvider($categoryId, 10);
-    foreach ($segments as $segments) {
-        echo $segments->getName()."\n";
+    foreach ($segments as $segment) {
+        echo $segment->getName()."\n";
     }
 
     try {

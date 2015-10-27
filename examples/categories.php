@@ -40,6 +40,7 @@
         $category = $adform->categories()->create($category);
 
         // Reload the category from the API
+        /** @var \Audiens\AdForm\Entity\Category $category */
         $category = $adform->categories()->getItem($category->getId());
         echo $category->getName()."\n";
 
@@ -55,7 +56,7 @@
         echo "Validation error: ".$e->getCode()." ".$e->getMessage()."\n";
 
         $validationErrors = $e->getErrors();
-        forach ($validationErrors as $validationError) {
+        foreach ($validationErrors as $validationError) {
             echo $validationError."\n";
         }
     } catch (Audiens\AdForm\Exception\ApiException $e) { //  API returned a general error
