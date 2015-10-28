@@ -116,7 +116,7 @@ class CategoryProvider
                 $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
 
                 if ($this->cache and $data) {
-                    $this->cache->put($uri, [], $data);
+                    $this->cache->put($uri, $options, $data);
                 }
             }
 
@@ -174,7 +174,7 @@ class CategoryProvider
                 $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
 
                 if ($this->cache and $data) {
-                    $this->cache->put($uri, [], $data);
+                    $this->cache->put($uri, $options, $data);
                 }
             }
 
@@ -232,7 +232,7 @@ class CategoryProvider
                 $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
 
                 if ($this->cache and $data) {
-                    $this->cache->put($uri, [], $data);
+                    $this->cache->put($uri, $options, $data);
                 }
             }
 
