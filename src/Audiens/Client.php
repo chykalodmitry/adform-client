@@ -5,6 +5,7 @@ namespace Audiens\AdForm;
 use Audiens\AdForm\Cache\CacheInterface;
 use Audiens\AdForm\Provider\CategoryProvider;
 use Audiens\AdForm\Provider\SegmentProvider;
+use Audiens\AdForm\Provider\DataUsageProvider;
 
 /**
  * Class Adform
@@ -53,9 +54,9 @@ class Client
     protected $segments;
 
     /**
-     * @var RevenueProvider
+     * @var DataUsageProvider
      */
-    protected $revenue;
+    protected $dataUsage;
 
     /**
      * Constructor.
@@ -99,5 +100,19 @@ class Client
         }
 
         return $this->segments;
+    }
+
+    /**
+     * A proxy method for working with data usage
+     *
+     * @return DataUsageProvider
+     */
+    public function dataUsage()
+    {
+        if (is_null($this->dataUsage)) {
+            $this->dataUsage = new DataUsageProvider($this->httpClient, $this->cache);
+        }
+
+        return $this->dataUsage;
     }
 }
