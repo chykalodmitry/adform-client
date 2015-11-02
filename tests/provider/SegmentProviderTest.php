@@ -105,8 +105,7 @@ class SegmentProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function getItemsCategoryWillReturnAnArrayOfSegments()
     {
-
-        $categories = $this->client->categories()->getItemsDataProvider(SANDBOX_DATA_PROVIDER_ID,1);
+        $categories = $this->client->categories()->getItemsDataProvider(SANDBOX_DATA_PROVIDER_ID, 1);
 
         $segments = $this->client->segments()->getItemsCategory($categories[0]->getId(), 2);
 
