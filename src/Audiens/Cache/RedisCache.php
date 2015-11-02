@@ -23,8 +23,8 @@ class RedisCache extends BaseCache implements CacheInterface
     protected $prefix;
 
     /**
-     * @param        $config
-     * @param int    $ttl
+     * @param array $config
+     * @param int $ttl
      * @param string $prefix
      *
      * @throws RedisException
@@ -43,30 +43,32 @@ class RedisCache extends BaseCache implements CacheInterface
     }
 
     /**
+     * @param string $providerPrefix
      * @param string $uri
      * @param string $query
      * @param string $data
      *
      * @return bool
      */
-    public function put($uri, $query, $data)
+    public function put($providerPrefix, $uri, $query, $data)
     {
-        $hash = $this->getHash($uri, $query);
+        $hash = $this->getHash($providerPrefix, $uri, $query);
 
-        return (bool) $this->client->set($hash, json_encode($data), "ex", $this->ttl);
+        return (bool) $this->client->set($hash, $data, "ex", $this->ttl);
     }
 
     /**
+     * @param string $providerPrefix
      * @param string $uri
      * @param string $query
      *
-     * @return mixed
+     * @return bool|mixed
      */
-    public function get($uri, $query)
+    public function get($providerPrefix, $uri, $query)
     {
-        $hash = $this->getHash($uri, $query);
+        $hash = $this->getHash($providerPrefix, $uri, $query);
 
-        $data = json_decode($this->client->get($hash));
+        $data = $this->client->get($hash);
 
         if (!empty($data)) {
             return $data;
@@ -76,15 +78,32 @@ class RedisCache extends BaseCache implements CacheInterface
     }
 
     /**
-     * @param $uri
-     * @param $query
+     * @param string $providerPrefix
+     * @param string $uri
+     * @param string $query
      *
      * @return bool
      */
-    public function delete($uri, $query)
+    public function delete($providerPrefix, $uri, $query)
     {
-        $hash = $this->getHash($uri, $query);
+        $hash = $this->getHash($providerPrefix, $uri, $query);
 
         return (bool) $this->client->del($hash);
+    }
+
+    /**
+     * @param string $providerPrefix
+     *
+     * @return bool
+     */
+    public function invalidate($providerPrefix)
+    {
+        $keys = $this->client->keys($this->prefix.strtolower($providerPrefix).'_*');
+
+        foreach ($keys as $key) {
+            $this->client->del($key);
+        }
+
+        return true;
     }
 }

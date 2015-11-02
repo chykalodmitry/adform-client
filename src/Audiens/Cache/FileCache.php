@@ -8,7 +8,7 @@ use League\Flysystem\Adapter\Local;
 class FileCache extends BaseCache implements CacheInterface
 {
     /**
-     * @var Filesystem
+     * @var League\Flysystem\Filesystem
      */
     private $filesystem;
 
@@ -23,8 +23,8 @@ class FileCache extends BaseCache implements CacheInterface
     protected $prefix;
 
     /**
-     * @param        $path
-     * @param int    $ttl
+     * @param string $path
+     * @param int $ttl
      * @param string $prefix
      */
     public function __construct($path, $ttl = 3600, $prefix = "adform_")
@@ -38,32 +38,34 @@ class FileCache extends BaseCache implements CacheInterface
     }
 
     /**
-     * @param $uri
-     * @param $query
-     * @param $data
+     * @param string $providerPrefix
+     * @param string $uri
+     * @param string $query
+     * @param string $data
      *
      * @return bool
      */
-    public function put($uri, $query, $data)
+    public function put($providerPrefix, $uri, $query, $data)
     {
-        $hash = $this->getHash($uri, $query);
+        $hash = $this->getHash($providerPrefix, $uri, $query);
 
-        return $this->filesystem->put($hash, json_encode($data));
+        return $this->filesystem->put($hash, $data);
     }
 
     /**
-     * @param $uri
-     * @param $query
+     * @param string $providerPrefix
+     * @param string $uri
+     * @param string $query
      *
      * @return bool|mixed
      */
-    public function get($uri, $query)
+    public function get($providerPrefix, $uri, $query)
     {
-        $hash = $this->getHash($uri, $query);
+        $hash = $this->getHash($providerPrefix, $uri, $query);
         $ttlCutoff = time() - $this->ttl;
 
         if ($this->filesystem->has($hash) and $this->filesystem->getTimestamp($hash) > $ttlCutoff) {
-            $data = json_decode($this->filesystem->read($hash));
+            $data = $this->filesystem->read($hash);
 
             if (!empty($data)) {
                 return $data;
@@ -74,15 +76,39 @@ class FileCache extends BaseCache implements CacheInterface
     }
 
     /**
-     * @param $uri
-     * @param $query
+     * @param string $providerPrefix
+     * @param string $uri
+     * @param string $query
      *
      * @return bool
      */
-    public function delete($uri, $query)
+    public function delete($providerPrefix, $uri, $query)
     {
-        $hash = $this->getHash($uri, $query);
+        $hash = $this->getHash($providerPrefix, $uri, $query);
 
-        return $this->filesystem->delete($hash);
+        if ($this->filesystem->has($hash)) {
+            return $this->filesystem->delete($hash);
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $providerPrefix
+     *
+     * @return bool
+     */
+    public function invalidate($providerPrefix)
+    {
+        $pattern = $this->prefix.strtolower($providerPrefix).'_';
+
+        $files = $this->filesystem->listContents();
+        foreach ($files as $file) {
+            if (stripos($file['filename'], $pattern) === 0) {
+                $this->filesystem->delete($file['filename']);
+            }
+        }
+
+        return true;
     }
 }

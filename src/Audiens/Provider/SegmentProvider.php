@@ -27,6 +27,11 @@ class SegmentProvider
     protected $cache;
 
     /**
+     * @var string
+     */
+    protected $cachePrefix = 'segment';
+
+    /**
      * Constructor.
      *
      * @param HttpClient $httpClient
@@ -57,7 +62,7 @@ class SegmentProvider
 
             // try to get from cache
             if ($this->cache) {
-                $data = $this->cache->get($uri, []);
+                $data = $this->cache->get($this->cachePrefix, $uri, []);
             }
 
             // load from API
@@ -65,7 +70,7 @@ class SegmentProvider
                 $data = $this->httpClient->get($uri)->getBody()->getContents();
 
                 if ($this->cache and $data) {
-                    $this->cache->put($uri, [], $data);
+                    $this->cache->put($this->cachePrefix, $uri, [], $data);
                 }
             }
 
@@ -108,7 +113,7 @@ class SegmentProvider
 
             // try to get from cache
             if ($this->cache) {
-                $data = $this->cache->get($uri, $options);
+                $data = $this->cache->get($this->cachePrefix, $uri, $options);
             }
 
             // load from API
@@ -116,7 +121,7 @@ class SegmentProvider
                 $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
 
                 if ($this->cache and $data) {
-                    $this->cache->put($uri, $options, $data);
+                    $this->cache->put($this->cachePrefix, $uri, $options, $data);
                 }
             }
 
@@ -166,7 +171,7 @@ class SegmentProvider
 
             // try to get from cache
             if ($this->cache) {
-                $data = $this->cache->get($uri, $options);
+                $data = $this->cache->get($this->cachePrefix, $uri, $options);
             }
 
             // load from API
@@ -174,7 +179,7 @@ class SegmentProvider
                 $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
 
                 if ($this->cache and $data) {
-                    $this->cache->put($uri, $options, $data);
+                    $this->cache->put($this->cachePrefix, $uri, $options, $data);
                 }
             }
 
@@ -224,7 +229,7 @@ class SegmentProvider
 
             // try to get from cache
             if ($this->cache) {
-                $data = $this->cache->get($uri, $options);
+                $data = $this->cache->get($this->cachePrefix, $uri, $options);
             }
 
             // load from API
@@ -232,7 +237,7 @@ class SegmentProvider
                 $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
 
                 if ($this->cache and $data) {
-                    $this->cache->put($uri, $options, $data);
+                    $this->cache->put($this->cachePrefix, $uri, $options, $data);
                 }
             }
 
@@ -282,7 +287,7 @@ class SegmentProvider
 
             // try to get from cache
             if ($this->cache) {
-                $data = $this->cache->get($uri, $options);
+                $data = $this->cache->get($this->cachePrefix, $uri, $options);
             }
 
             // load from API
@@ -290,7 +295,7 @@ class SegmentProvider
                 $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
 
                 if ($this->cache and $data) {
-                    $this->cache->put($uri, $options, $data);
+                    $this->cache->put($this->cachePrefix, $uri, $options, $data);
                 }
             }
 
@@ -335,7 +340,8 @@ class SegmentProvider
             $segment = SegmentHydrator::fromStdClass(json_decode($data));
 
             if ($this->cache and $data) {
-                $this->cache->put($uri.'/'.$segment->getId(), [], $data);
+                $this->cache->invalidate($this->cachePrefix);
+                $this->cache->put($this->cachePrefix, $uri.'/'.$segment->getId(), [], $data);
             }
 
             return $segment;
@@ -380,7 +386,8 @@ class SegmentProvider
             $segment = SegmentHydrator::fromStdClass(json_decode($data));
 
             if ($this->cache and $data) {
-                $this->cache->put($uri.'/'.$segment->getId(), [], $data);
+                $this->cache->invalidate($this->cachePrefix);
+                $this->cache->put($this->cachePrefix, $uri.'/'.$segment->getId(), [], $data);
             }
 
             return $segment;
@@ -418,7 +425,7 @@ class SegmentProvider
             $response = $this->httpClient->delete($uri);
 
             if ($this->cache) {
-                $this->cache->delete($uri.'/'.$segment->getId(), []);
+                $this->cache->invalidate($this->cachePrefix);
             }
 
             return true;

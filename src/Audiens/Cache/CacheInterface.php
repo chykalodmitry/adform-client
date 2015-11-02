@@ -8,27 +8,37 @@ namespace Audiens\AdForm\Cache;
 interface CacheInterface
 {
     /**
+     * @param $providerPrefix
      * @param $uri
      * @param $query
      * @param $data
      *
-     * @return void
+     * @return bool
      */
-    public function put($uri, $query, $data);
+    public function put($providerPrefix, $uri, $query, $data);
 
     /**
+     * @param $providerPrefix
+     * @param $uri
+     * @param $query
+     *
+     * @return bool|mixed
+     */
+    public function get($providerPrefix, $uri, $query);
+
+    /**
+     * @param $providerPrefix
      * @param $uri
      * @param $query
      *
      * @return bool
      */
-    public function get($uri, $query);
+    public function delete($providerPrefix, $uri, $query);
 
     /**
-     * @param $uri
-     * @param $query
+     * @param $providerPrefix
      *
      * @return bool
      */
-    public function delete($uri, $query);
+    public function invalidate($providerPrefix);
 }

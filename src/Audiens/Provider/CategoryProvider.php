@@ -27,6 +27,11 @@ class CategoryProvider
     protected $cache;
 
     /**
+     * @var string
+     */
+    protected $cachePrefix = 'category';
+
+    /**
      * Constructor.
      *
      * @param HttpClient $httpClient
@@ -57,7 +62,7 @@ class CategoryProvider
 
             // try to get from cache
             if ($this->cache) {
-                $data = $this->cache->get($uri, []);
+                $data = $this->cache->get($this->cachePrefix, $uri, []);
             }
 
             // load from API
@@ -65,7 +70,7 @@ class CategoryProvider
                 $data = $this->httpClient->get($uri)->getBody()->getContents();
 
                 if ($this->cache and $data) {
-                    $this->cache->put($uri, [], $data);
+                    $this->cache->put($this->cachePrefix, $uri, [], $data);
                 }
             }
 
@@ -108,7 +113,7 @@ class CategoryProvider
 
             // try to get from cache
             if ($this->cache) {
-                $data = $this->cache->get($uri, $options);
+                $data = $this->cache->get($this->cachePrefix, $uri, $options);
             }
 
             // load from API
@@ -116,7 +121,7 @@ class CategoryProvider
                 $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
 
                 if ($this->cache and $data) {
-                    $this->cache->put($uri, $options, $data);
+                    $this->cache->put($this->cachePrefix, $uri, $options, $data);
                 }
             }
 
@@ -166,7 +171,7 @@ class CategoryProvider
 
             // try to get from cache
             if ($this->cache) {
-                $data = $this->cache->get($uri, $options);
+                $data = $this->cache->get($this->cachePrefix, $uri, $options);
             }
 
             // load from API
@@ -174,7 +179,7 @@ class CategoryProvider
                 $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
 
                 if ($this->cache and $data) {
-                    $this->cache->put($uri, $options, $data);
+                    $this->cache->put($this->cachePrefix, $uri, $options, $data);
                 }
             }
 
@@ -224,7 +229,7 @@ class CategoryProvider
 
             // try to get from cache
             if ($this->cache) {
-                $data = $this->cache->get($uri, $options);
+                $data = $this->cache->get($this->cachePrefix, $uri, $options);
             }
 
             // load from API
@@ -232,7 +237,7 @@ class CategoryProvider
                 $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
 
                 if ($this->cache and $data) {
-                    $this->cache->put($uri, $options, $data);
+                    $this->cache->put($this->cachePrefix, $uri, $options, $data);
                 }
             }
 
@@ -277,7 +282,8 @@ class CategoryProvider
             $category = CategoryHydrator::fromStdClass(json_decode($data));
 
             if ($this->cache and $data) {
-                $this->cache->put($uri.'/'.$category->getId(), [], $data);
+                $this->cache->invalidate($this->cachePrefix);
+                $this->cache->put($this->cachePrefix, $uri.'/'.$category->getId(), [], $data);
             }
 
             return $category;
@@ -323,7 +329,8 @@ class CategoryProvider
             $category = CategoryHydrator::fromStdClass(json_decode($data));
 
             if ($this->cache and $data) {
-                $this->cache->put($uri.'/'.$category->getId(), [], $data);
+                $this->cache->invalidate($this->cachePrefix);
+                $this->cache->put($this->cachePrefix, $uri.'/'.$category->getId(), [], $data);
             }
 
             return $category;
@@ -361,7 +368,7 @@ class CategoryProvider
             $response = $this->httpClient->delete($uri);
 
             if ($this->cache) {
-                $this->cache->delete($uri.'/'.$category->getId(), []);
+                $this->cache->invalidate($this->cachePrefix);
             }
 
             return true;
