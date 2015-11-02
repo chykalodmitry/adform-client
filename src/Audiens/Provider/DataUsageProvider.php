@@ -51,7 +51,7 @@ class DataUsageProvider
      * @param int $limit
      * @param int $offset
      *
-     * @throws ApiException if the API call fails
+     * @throws Exception\ApiException if the API call fails
      *
      * @return array
      */
@@ -91,7 +91,7 @@ class DataUsageProvider
             }
 
             $usage = json_decode($data);
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (ClientException $e) {
             $response = $e->getResponse();
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();

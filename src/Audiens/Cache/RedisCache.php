@@ -3,12 +3,16 @@
 namespace Audiens\AdForm\Cache;
 
 use Audiens\AdForm\Exception\RedisException;
-use Predis;
+use Predis\Client;
+use Predis\Response\ServerException;
 
+/**
+ * Class RedisCache
+ */
 class RedisCache extends BaseCache implements CacheInterface
 {
     /**
-     * @var Predis\Client
+     * @var Client
      */
     private $client;
 
@@ -32,8 +36,8 @@ class RedisCache extends BaseCache implements CacheInterface
     public function __construct($config, $ttl = 3600, $prefix = "adform_")
     {
         try {
-            $this->client = new Predis\Client($config);
-        } catch (Predis\Response\ServerException $e) {
+            $this->client = new Client($config);
+        } catch (ServerException $e) {
             throw RedisException::connect($e->getMessage());
         }
 
