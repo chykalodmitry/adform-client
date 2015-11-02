@@ -53,7 +53,7 @@ class CategoryProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function geItemWillReturnInstanceOfCategory()
+    public function getItemWillReturnInstanceOfCategory()
     {
         $category = $this->createFixture();
 
@@ -65,7 +65,7 @@ class CategoryProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function geItemsWillReturnArrayOfCategories()
+    public function getItemsWillReturnArrayOfCategories()
     {
         $categories = $this->client->categories()->getItems(1);
 

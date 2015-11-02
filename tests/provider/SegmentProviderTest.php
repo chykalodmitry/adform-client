@@ -62,7 +62,7 @@ class SegmentProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function geItemWillReturnInstanceOfSegment()
+    public function getItemWillReturnInstanceOfSegment()
     {
         $segment = $this->createFixture();
 
@@ -74,7 +74,7 @@ class SegmentProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function geItemsWillReturnArrayOfSegments()
+    public function getItemsWillReturnArrayOfSegments()
     {
         $segments = $this->client->segments()->getItems(1);
 
