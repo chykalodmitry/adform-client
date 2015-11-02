@@ -32,9 +32,8 @@ class SegmentProvider
     protected $cachePrefix = 'segment';
 
     /**
-     * Constructor.
-     *
-     * @param HttpClient $httpClient
+     * @param HttpClient          $httpClient
+     * @param CacheInterface|null $cache
      */
     public function __construct(HttpClient $httpClient, CacheInterface $cache = null)
     {
@@ -80,7 +79,7 @@ class SegmentProvider
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw Exception\EntityNotFoundException::translate($categoryId, $responseBody, $responseCode);
+            throw Exception\EntityNotFoundException::translate($segmentId, $responseBody, $responseCode);
         }
     }
 
@@ -422,7 +421,8 @@ class SegmentProvider
         $uri = sprintf('v1/segments/%d', $segment->getId());
 
         try {
-            $response = $this->httpClient->delete($uri);
+
+            $this->httpClient->delete($uri);
 
             if ($this->cache) {
                 $this->cache->invalidate($this->cachePrefix);
