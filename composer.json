@@ -8,7 +8,7 @@
     "php"
   ],
   "type": "library",
-  "homepage": "https://github.com/ranpafin",
+  "homepage": "https://github.com/Audiens/adform-client",
   "license": "MIT",
   "authors": [
     {
@@ -17,18 +17,20 @@
     }
   ],
   "require": {
-    "php": ">=5.4.0",
+    "php": ">=5.5.0",
     "guzzlehttp/guzzle": "~6.0",
     "ext-mbstring": "*",
-    "myclabs/php-enum": "~1.4"
+    "myclabs/php-enum": "~1.4",
+    "league/oauth2-client": "^1.0",
+    "predis/predis": "^1.0",
+    "league/flysystem": "^1.0"
   },
   "require-dev": {
     "phpunit/phpunit": "~4.8"
   },
   "autoload": {
     "psr-4": {
-      "DMP\\": "src/Audiens/dmp-client",
-      "DATA\\": "src/Audiens/data"
+      "Audiens\\AdForm\\": "src/Audiens/"
     }
   },
   "autoload-dev": {
