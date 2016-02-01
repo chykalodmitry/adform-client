@@ -14,8 +14,10 @@ $ composer require Audiens/adform-client
 # Available endpoints
 
 The current implementation covers the following endpoints:
-* [Segments](https://dmp.adform.com/help#data_provider_segments_service)
-* [Categories](https://dmp.adform.com/help#data_provider_categories_service)
+* [Segments](https://dmp.adform.com/Help#data_provider_segments_service)
+* [Categories](https://dmp.adform.com/Help#data_provider_categories_service)
+* [Data usage report](https://dmp.adform.com/Help#reports_service)
+* [Data Provider Audience report](https://dmp.adform.com/Help#reports_service)
 
 # Usage
 
