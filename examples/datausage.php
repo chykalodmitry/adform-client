@@ -14,7 +14,7 @@ try {
         'port' => 6379,
     ];
     $cache = new Audiens\AdForm\Cache\RedisCache($redisConfig);
-    $adform = new Audiens\AdForm\Client($username, $password);//, $cache);
+    $adform = new Audiens\AdForm\Client($username, $password, $cache);
 
 } catch (Audiens\AdForm\Exception\OauthException $e) {
     exit($e->getMessage());

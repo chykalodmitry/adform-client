@@ -6,6 +6,7 @@ use Audiens\AdForm\Cache\CacheInterface;
 use Audiens\AdForm\Provider\CategoryProvider;
 use Audiens\AdForm\Provider\SegmentProvider;
 use Audiens\AdForm\Provider\DataUsageProvider;
+use Audiens\AdForm\Provider\DataProviderAudienceProvider;
 
 /**
  * Class Adform
@@ -19,7 +20,7 @@ class Client
      *
      * @const string
      */
-    const VERSION = '0.1.0';
+    const VERSION = '0.2.0';
 
     /**
      * URL for the AdForm API.
@@ -57,6 +58,11 @@ class Client
      * @var DataUsageProvider
      */
     protected $dataUsage;
+
+    /**
+     * @var DPAudienceProvider
+     */
+    protected $dataProviderAudience;
 
     /**
      * Constructor.
@@ -103,7 +109,7 @@ class Client
     }
 
     /**
-     * A proxy method for working with data usage
+     * A proxy method for working with data usage reports
      *
      * @return DataUsageProvider
      */
@@ -114,5 +120,19 @@ class Client
         }
 
         return $this->dataUsage;
+    }
+
+    /**
+     * A proxy method for working with data provider audience reports
+     *
+     * @return DPAudienceProvider
+     */
+    public function dataProviderAudience()
+    {
+        if (is_null($this->dataProviderAudience)) {
+            $this->dataProviderAudience = new DataProviderAudienceProvider($this->httpClient, $this->cache);
+        }
+
+        return $this->dataProviderAudience;
     }
 }
