@@ -134,6 +134,19 @@ class Segment implements JsonSerializable
         return $this->id;
     }
 
+
+    /**
+     * @param int $id
+     *
+     * @return Segment
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     /**
      * @return int
      */
