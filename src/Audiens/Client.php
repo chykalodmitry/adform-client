@@ -20,7 +20,7 @@ class Client
      *
      * @const string
      */
-    const VERSION = '0.2.0';
+    const VERSION = '0.2.1';
 
     /**
      * URL for the AdForm API.
@@ -69,7 +69,7 @@ class Client
      *
      * @param string $username
      * @param string $password
-     * @param CacheInterface $cache
+     * @param CacheInterface|null $cache
      */
     public function __construct($username, $password, CacheInterface $cache = null)
     {
@@ -125,7 +125,7 @@ class Client
     /**
      * A proxy method for working with data provider audience reports
      *
-     * @return DPAudienceProvider
+     * @return DataProviderAudienceProvider
      */
     public function dataProviderAudience()
     {

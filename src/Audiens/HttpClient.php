@@ -4,11 +4,12 @@ namespace Audiens\AdForm;
 
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception;
+use Psr\Http\Message\ResponseInterface;
 
 /**
- * Class OauthClient
+ * Class HttpClient
  *
- * @package OauthClient
+ * @package Adform
  */
 class HttpClient
 {
@@ -43,7 +44,7 @@ class HttpClient
      * @param string $uri
      * @param array $options
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function get($uri, array $options = [])
     {
@@ -56,7 +57,7 @@ class HttpClient
      * @param string $uri
      * @param array $options
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function post($uri, array $options = [])
     {
@@ -69,7 +70,7 @@ class HttpClient
      * @param string $uri
      * @param array $options
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function put($uri, array $options = [])
     {
@@ -82,7 +83,7 @@ class HttpClient
      * @param string $uri
      * @param array $options
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function delete($uri, array $options = [])
     {
@@ -97,7 +98,7 @@ class HttpClient
      * @param string $uri
      * @param array $options
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function request($method, $uri, array $options = [])
     {

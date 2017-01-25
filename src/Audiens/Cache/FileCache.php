@@ -5,10 +5,13 @@ namespace Audiens\AdForm\Cache;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Adapter\Local;
 
+/**
+ * Class FileCache
+ */
 class FileCache extends BaseCache implements CacheInterface
 {
     /**
-     * @var League\Flysystem\Filesystem
+     * @var Filesystem
      */
     private $filesystem;
 

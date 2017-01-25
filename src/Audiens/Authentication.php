@@ -40,8 +40,8 @@ class Authentication
     {
         $urlAccessToken = Client::BASE_URL.'/v1/token';
 
-        // we are using a very simple password grant AdForm
-        // doesn't event return a Refresh Token AF
+        // we are using a very simple password grant
+        // AdForm doesn't even return a Refresh Token
         $provider = new GenericProvider([
             'clientId' => '',
             'clientSecret' => '',

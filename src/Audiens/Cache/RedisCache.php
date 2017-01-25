@@ -58,7 +58,7 @@ class RedisCache extends BaseCache implements CacheInterface
     {
         $hash = $this->getHash($providerPrefix, $uri, $query);
 
-        return (bool) $this->client->set($hash, $data, "ex", $this->ttl);
+        return (bool)$this->client->set($hash, $data, "ex", $this->ttl);
     }
 
     /**

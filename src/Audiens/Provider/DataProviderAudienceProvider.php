@@ -10,7 +10,7 @@ use Audiens\AdForm\Cache\CacheInterface;
 use GuzzleHttp\Exception\ClientException;
 
 /**
- * Class DPAudienceProvider
+ * Class DataProviderAudienceProvider
  *
  * @package Adform
  */
@@ -35,6 +35,7 @@ class DataProviderAudienceProvider
      * Constructor.
      *
      * @param HttpClient $httpClient
+     * @param CacheInterface|null $cache
      */
     public function __construct(HttpClient $httpClient, CacheInterface $cache = null)
     {

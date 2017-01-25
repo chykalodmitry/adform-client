@@ -35,6 +35,7 @@ class CategoryProvider
      * Constructor.
      *
      * @param HttpClient $httpClient
+     * @param CacheInterface|null $cache
      */
     public function __construct(HttpClient $httpClient, CacheInterface $cache = null)
     {

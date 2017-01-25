@@ -168,7 +168,7 @@ class Segment implements JsonSerializable
     }
 
     /**
-     * @return bool
+     * @return SegmentStatus
      */
     public function getStatus()
     {
@@ -176,7 +176,7 @@ class Segment implements JsonSerializable
     }
 
     /**
-     * @param int $status
+     * @param SegmentStatus $status
      *
      * @return Segment
      */
@@ -428,7 +428,7 @@ class Segment implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getFrequency()
     {
@@ -436,7 +436,7 @@ class Segment implements JsonSerializable
     }
 
     /**
-     * @param string $frequency
+     * @param int $frequency
      *
      * @return Segment
      */
