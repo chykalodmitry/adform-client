@@ -30,8 +30,10 @@ class DataProviderAudienceProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInternalType('array', $dataProviderAudiences);
 
-        list($dataProviderAudience) = $dataProviderAudiences;
+        if (count($dataProviderAudiences) > 0) {
+            list($dataProviderAudience) = $dataProviderAudiences;
 
-        $this->assertInstanceOf(DataProviderAudience::class, $dataProviderAudience);
+            $this->assertInstanceOf(DataProviderAudience::class, $dataProviderAudience);
+        }
     }
 }

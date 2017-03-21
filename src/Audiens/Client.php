@@ -3,6 +3,7 @@
 namespace Audiens\AdForm;
 
 use Audiens\AdForm\Cache\CacheInterface;
+use Audiens\AdForm\Provider\AudienceProvider;
 use Audiens\AdForm\Provider\CategoryProvider;
 use Audiens\AdForm\Provider\SegmentProvider;
 use Audiens\AdForm\Provider\DataUsageProvider;
@@ -50,6 +51,11 @@ class Client
     protected $categories;
 
     /**
+     * @var AudienceProvider
+     */
+    protected $audiences;
+
+    /**
      * @var SegmentProvider
      */
     protected $segments;
@@ -92,6 +98,19 @@ class Client
         }
 
         return $this->categories;
+    }
+
+    /**
+     * A proxy method for working with categories
+     *
+     * @return AudienceProvider
+     */
+    public function audience()
+    {
+        if (is_null($this->audiences)) {
+            $this->audiences = new AudienceProvider($this->httpClient, $this->cache);
+        }
+        return $this->audiences;
     }
 
     /**
