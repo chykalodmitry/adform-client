@@ -18,6 +18,7 @@ The current implementation covers the following endpoints:
 * [Categories](https://dmp.adform.com/Help#data_provider_categories_service)
 * [Data usage report](https://dmp.adform.com/Help#reports_service)
 * [Data Provider Audience report](https://dmp.adform.com/Help#reports_service)
+* [Agencies](https://dmp.adform.com/Help#agency_service)
 
 # Usage
 
