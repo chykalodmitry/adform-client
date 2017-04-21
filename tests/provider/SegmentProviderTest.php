@@ -3,6 +3,7 @@
 namespace Audiens\AdForm\Tests\Provider;
 
 use Audiens\AdForm\Client;
+use Audiens\AdForm\Entity\Category;
 use Audiens\AdForm\Entity\Segment;
 use Audiens\AdForm\Enum\SegmentStatus;
 
@@ -15,6 +16,8 @@ class SegmentProviderTest extends \PHPUnit_Framework_TestCase
     private $client;
 
     private $fixtures = [];
+
+    private $categoryFixtures = [];
 
     public function setUp()
     {
@@ -30,6 +33,28 @@ class SegmentProviderTest extends \PHPUnit_Framework_TestCase
                 echo "Segment delete error: ".$e->getMessage()."\n";
             }
         }
+        foreach ($this->categoryFixtures as $fixture) {
+            try {
+                $this->client->categories()->delete($fixture);
+            } catch (\Exception $e) {
+                echo "Category delete error: ".$e->getMessage()."\n";
+            }
+        }
+
+    }
+
+    private function createCategoryFixture($addTearDown = true, $forceCreate = false)
+    {
+        $category = new Category();
+        $category->setName($this->getRandomName())
+            ->setDataProviderId(SANDBOX_DATA_PROVIDER_ID);
+        $category = $this->client->categories()->create($category);
+
+        if ($addTearDown) {
+            $this->categoryFixtures[] = $category;
+        }
+
+        return $category;
     }
 
     private function getRandomName()
@@ -41,12 +66,14 @@ class SegmentProviderTest extends \PHPUnit_Framework_TestCase
     {
         $name = $this->getRandomName();
 
+        $category = $this->createCategoryFixture();
+
         $segment = new Segment();
         $segment->setName($name)
             ->setDataProviderId(SANDBOX_DATA_PROVIDER_ID)
             ->setStatus(new SegmentStatus('active'))
             ->setTtl(100)
-            ->setCategoryId(377806)
+            ->setCategoryId($category->getId())
             ->setFrequency(5)
             ->setRefId(strtolower($name))
             ->setFee(0.6);
@@ -105,12 +132,12 @@ class SegmentProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function getItemsCategoryWillReturnAnArrayOfSegments()
     {
-        $categories = $this->client->categories()->getItemsDataProvider(SANDBOX_DATA_PROVIDER_ID, 1);
+        $segment = $this->createFixture();
 
-        $segments = $this->client->segments()->getItemsCategory($categories[0]->getId(), 2);
+        $segments = $this->client->segments()->getItemsCategory($segment->getCategoryId(), 2);
 
         $this->assertInternalType('array', $segments);
-        $this->assertNotEmpty($segments);
+        $this->assertGreaterThanOrEqual(1, count($segments));
 
         list($segment) = $segments;
 

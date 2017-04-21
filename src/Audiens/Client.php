@@ -3,6 +3,7 @@
 namespace Audiens\AdForm;
 
 use Audiens\AdForm\Cache\CacheInterface;
+use Audiens\AdForm\Provider\AgencyProvider;
 use Audiens\AdForm\Provider\AudienceProvider;
 use Audiens\AdForm\Provider\CategoryProvider;
 use Audiens\AdForm\Provider\SegmentProvider;
@@ -59,6 +60,9 @@ class Client
      * @var SegmentProvider
      */
     protected $segments;
+
+    /** @var  AgencyProvider */
+    protected $agencies;
 
     /**
      * @var DataUsageProvider
@@ -125,6 +129,20 @@ class Client
         }
 
         return $this->segments;
+    }
+
+    /**
+     * A proxy method for working with agencies
+     *
+     * @return AgencyProvider
+     */
+    public function agencies()
+    {
+        if (is_null($this->agencies)) {
+            $this->agencies = new AgencyProvider($this->httpClient, $this->cache);
+        }
+
+        return $this->agencies;
     }
 
     /**
