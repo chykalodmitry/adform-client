@@ -26,7 +26,7 @@ class AgencyProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function getItemWillReturnAnAgency()
     {
-        $agencyId = 1; //change this with a valid agency id
+        $agencyId = "1"; //change this with a valid agency id
 
         if(!empty($agencyId)) {
             $agency = $this->client->agencies()->getItem($agencyId);

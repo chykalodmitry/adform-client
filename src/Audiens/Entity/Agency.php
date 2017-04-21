@@ -10,7 +10,7 @@ use JsonSerializable;
 class Agency implements JsonSerializable
 {
     /**
-     * @var int
+     * @var string
      */
     protected $id;
 
@@ -30,7 +30,7 @@ class Agency implements JsonSerializable
     protected $active;
 
     /**
-     * @return int
+     * @return string
      */
     public function getId()
     {
@@ -38,12 +38,14 @@ class Agency implements JsonSerializable
     }
 
     /**
-     * @param int $id
+     * @param string $id
      */
     public function setId($id)
     {
         $this->id = $id;
     }
+
+
 
     /**
      * @return string
