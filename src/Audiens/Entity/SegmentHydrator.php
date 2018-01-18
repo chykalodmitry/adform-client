@@ -45,12 +45,7 @@ class SegmentHydrator extends Segment
         $segment->audienceByUserIdentityType = $stdClass->audienceByUserIdentityType;
         $segment->isExtended = (bool)$stdClass->isExtended;
 
-        // might not be set in JSON
-        if (isset($stdClass->extensionThreshold)) {
-            $segment->extensionThreshold = (bool)$stdClass->extensionThreshold;
-        }
-
-        $segment->frequency = (int)$stdClass->frequency;
+        $segment->frequency = (int)$stdClass->frequency
         $segment->isCrossDevice = (bool)$stdClass->isCrossDevice;
         $segment->hasDataUsagePermissions = (bool)$stdClass->hasDataUsagePermissions;
 
