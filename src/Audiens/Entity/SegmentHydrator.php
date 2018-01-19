@@ -45,7 +45,7 @@ class SegmentHydrator extends Segment
         $segment->audienceByUserIdentityType = $stdClass->audienceByUserIdentityType;
         $segment->isExtended = (bool)$stdClass->isExtended;
 
-        $segment->frequency = (int)$stdClass->frequency
+        $segment->frequency = (int)$stdClass->frequency;
         $segment->isCrossDevice = (bool)$stdClass->isCrossDevice;
         $segment->hasDataUsagePermissions = (bool)$stdClass->hasDataUsagePermissions;
 
