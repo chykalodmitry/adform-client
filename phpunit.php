@@ -6,8 +6,10 @@ include __DIR__.'/vendor/autoload.php';
 
 function loadSandboxCredentials()
 {
-    $dotEnv = new Dotenv(__DIR__);
-    $dotEnv->load();
+    try {
+        $dotEnv = new Dotenv(__DIR__);
+        $dotEnv->load();
+    } catch (Exception $_) {}
 
     define('SANDBOX_DATA_PROVIDER_ID', (int)getenv('SANDBOX_DATA_PROVIDER_ID'));
     define('SANDBOX_USERNAME', getenv('SANDBOX_USERNAME'));
