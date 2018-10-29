@@ -2,11 +2,13 @@
 
 namespace Audiens\AdForm\Provider;
 
+use Audiens\AdForm\Cache\CacheInterface;
 use Audiens\AdForm\Entity\Category;
 use Audiens\AdForm\Entity\CategoryHydrator;
+use Audiens\AdForm\Exception\ApiException;
+use Audiens\AdForm\Exception\EntityInvalidException;
+use Audiens\AdForm\Exception\EntityNotFoundException;
 use Audiens\AdForm\HttpClient;
-use Audiens\AdForm\Exception;
-use Audiens\AdForm\Cache\CacheInterface;
 use GuzzleHttp\Exception\ClientException;
 
 /**
@@ -49,7 +51,7 @@ class CategoryProvider
      *
      * @param int $categoryId ID of the category
      *
-     * @throws Exception\EntityNotFoundException if the API call fails
+     * @throws EntityNotFoundException if the API call fails
      *
      * @return Category
      */
@@ -81,7 +83,7 @@ class CategoryProvider
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw Exception\EntityNotFoundException::translate($categoryId, $responseBody, $responseCode);
+            throw EntityNotFoundException::translate($categoryId, $responseBody, $responseCode);
         }
     }
 
@@ -91,7 +93,7 @@ class CategoryProvider
      * @param int $limit
      * @param int $offset
      *
-     * @throws Exception\ApiException if the API call fails
+     * @throws ApiException if the API call fails
      *
      * @return array
      */
@@ -136,7 +138,7 @@ class CategoryProvider
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw Exception\ApiException::translate($responseBody, $responseCode);
+            throw ApiException::translate($responseBody, $responseCode);
         }
 
         return $categories;
@@ -149,7 +151,7 @@ class CategoryProvider
      * @param int $limit
      * @param int $offset
      *
-     * @throws Exception\ApiException if the API call fails
+     * @throws ApiException if the API call fails
      *
      * @return array
      */
@@ -194,7 +196,7 @@ class CategoryProvider
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw Exception\ApiException::translate($responseBody, $responseCode);
+            throw ApiException::translate($responseBody, $responseCode);
         }
 
         return $categories;
@@ -207,7 +209,7 @@ class CategoryProvider
      * @param int $limit
      * @param int $offset
      *
-     * @throws Exception\ApiException if the API call fails
+     * @throws ApiException if the API call fails
      *
      * @return array
      */
@@ -252,7 +254,7 @@ class CategoryProvider
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw Exception\ApiException::translate($responseBody, $responseCode);
+            throw ApiException::translate($responseBody, $responseCode);
         }
 
         return $categories;
@@ -263,8 +265,8 @@ class CategoryProvider
      *
      * @param Category $category
      *
-     * @throws Exception\EntityInvalidException if the API returns a validation error
-     * @throws Exception\ApiException if the API call fails
+     * @throws EntityInvalidException if the API returns a validation error
+     * @throws ApiException if the API call fails
      *
      * @return Category
      */
@@ -290,17 +292,7 @@ class CategoryProvider
             return $category;
 
         } catch (ClientException $e) {
-            $response = $e->getResponse();
-            $responseBody = $response->getBody()->getContents();
-            $responseCode = $response->getStatusCode();
-
-            $error = json_decode($responseBody);
-
-            if (property_exists($error, 'modelState')) { // validation error
-                throw Exception\EntityInvalidException::invalid($responseBody, $responseCode, $error->modelState);
-            } else { // general error
-                throw Exception\ApiException::translate($responseBody, $responseCode);
-            }
+            $this->manageClientException($e);
         }
 
     }
@@ -310,8 +302,8 @@ class CategoryProvider
      *
      * @param Category $category
      *
-     * @throws Exception\EntityInvalidException if the API returns a validation error
-     * @throws Exception\ApiException if the API call fails
+     * @throws EntityInvalidException if the API returns a validation error
+     * @throws ApiException if the API call fails
      *
      * @return Category
      */
@@ -336,19 +328,8 @@ class CategoryProvider
 
             return $category;
         } catch (ClientException $e) {
-            $response = $e->getResponse();
-            $responseBody = $response->getBody()->getContents();
-            $responseCode = $response->getStatusCode();
-
-            $error = json_decode($responseBody);
-
-            if (property_exists($error, 'modelState')) { // validation error
-                throw Exception\EntityInvalidException::invalid($responseBody, $responseCode, $error->modelState);
-            } else { // general error
-                throw Exception\ApiException::translate($responseBody, $responseCode);
-            }
+            $this->manageClientException($e);
         }
-
     }
 
     /**
@@ -356,9 +337,9 @@ class CategoryProvider
      *
      * @param Category $category
      *
-     * @throws Exception\ApiException if the API call fails
+     * @throws ApiException if the API call fails
      *
-     * @return Category
+     * @return bool
      */
     public function delete(Category $category)
     {
@@ -366,20 +347,68 @@ class CategoryProvider
         $uri = sprintf('v1/categories/%d', $category->getId());
 
         try {
-            $response = $this->httpClient->delete($uri);
+            $this->httpClient->delete($uri);
 
             if ($this->cache) {
                 $this->cache->invalidate($this->cachePrefix);
             }
-
-            return true;
         } catch (ClientException $e) {
             $response = $e->getResponse();
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw Exception\ApiException::translate($responseBody, $responseCode);
+            throw ApiException::translate($responseBody, $responseCode);
         }
 
+        return true;
+    }
+
+    /**
+     * @param ClientException $exception
+     *
+     * @throws EntityInvalidException
+     * @throws ApiException
+     */
+    protected function manageClientException(ClientException $exception)
+    {
+        $response = $exception->getResponse();
+
+        if ($response === null) {
+            throw $exception;
+        }
+
+        $responseBody = $response->getBody()->getContents();
+        $responseCode = $response->getStatusCode();
+
+        $error = json_decode($responseBody);
+
+        // Validation
+        if (isset($error->modelState)) {
+            throw EntityInvalidException::invalid($responseBody, $responseCode, $error->modelState);
+        }
+
+        if (isset($error->reason, $error->params) && $error->reason === 'validationFailed') {
+            $errorMessages = [];
+            foreach ($error->params as $paramName => $paramArr) {
+                if (!\is_array($paramArr)) {
+                    $errorMessages[] = $paramName;
+
+                    continue;
+                }
+
+                foreach ($paramArr as $paramObj) {
+                    $errorMessages[] = isset($paramObj->message) ? $paramObj->message : $paramName;
+                }
+            }
+
+            throw EntityInvalidException::invalid(
+                $responseBody,
+                $responseCode,
+                \implode("\n", $errorMessages)
+            );
+        }
+
+        // Generic exception
+        throw ApiException::translate($responseBody, $responseCode);
     }
 }

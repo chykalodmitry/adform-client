@@ -4,6 +4,8 @@ namespace Audiens\AdForm\Tests\Provider;
 
 use Audiens\AdForm\Client;
 use Audiens\AdForm\Entity\Category;
+use Audiens\AdForm\Exception\EntityInvalidException;
+use Audiens\AdForm\Exception\ApiException;
 
 /**
  * Class CategoryProviderTest
@@ -105,10 +107,10 @@ class CategoryProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function createWillThrowEntityInvalidException()
     {
-        $this->setExpectedException('Audiens\AdForm\Exception\EntityInvalidException');
+        $this->setExpectedException(EntityInvalidException::class);
 
         $category = new Category();
-        $category = $this->client->categories()->create($category);
+        $this->client->categories()->create($category);
     }
 
     /**
@@ -132,7 +134,7 @@ class CategoryProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function updateWillThrowEntityInvalidException()
     {
-        $this->setExpectedException('Audiens\AdForm\Exception\EntityInvalidException');
+        $this->setExpectedException(EntityInvalidException::class);
 
         $categoryUnique = $this->createFixture();
         $categoryUpdate = $this->createFixture();
@@ -158,7 +160,7 @@ class CategoryProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function deleteWillThrowApiException()
     {
-        $this->setExpectedException('Audiens\AdForm\Exception\ApiException');
+        $this->setExpectedException(ApiException::class);
 
         $category = new Category();
 

@@ -2,6 +2,8 @@
 
 namespace Audiens\AdForm\Tests;
 
+use Audiens\AdForm\Authentication;
+
 /**
  * Class AuthenticationTest
  */
@@ -12,9 +14,9 @@ class AuthenticationTest extends \PHPUnit_Framework_TestCase
      */
     public function autenticateWillReturnAnAuthenticationObject()
     {
-        $auth = new \Audiens\AdForm\Authentication(SANDBOX_USERNAME, SANDBOX_PASSWORD);
+        $auth = new Authentication(SANDBOX_USERNAME, SANDBOX_PASSWORD);
 
-        $this->assertInstanceOf(\Audiens\AdForm\Authentication::class, $auth);
+        $this->assertInstanceOf(Authentication::class, $auth);
 
         $this->assertNotEmpty($auth->getAccessToken());
     }

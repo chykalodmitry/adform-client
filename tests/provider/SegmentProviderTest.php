@@ -6,6 +6,7 @@ use Audiens\AdForm\Client;
 use Audiens\AdForm\Entity\Category;
 use Audiens\AdForm\Entity\Segment;
 use Audiens\AdForm\Enum\SegmentStatus;
+use Audiens\AdForm\Exception\EntityInvalidException;
 
 /**
  * Class SegmentProviderTest
@@ -159,10 +160,10 @@ class SegmentProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function createWillThrowEntityInvalidException()
     {
-        $this->setExpectedException('Audiens\AdForm\Exception\EntityInvalidException');
+        $this->setExpectedException(EntityInvalidException::class);
 
         $segment = new Segment();
-        $segment = $this->client->segments()->create($segment);
+        $this->client->segments()->create($segment);
     }
 
     /**
@@ -186,7 +187,7 @@ class SegmentProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function updateWillThrowEntityInvalidException()
     {
-        $this->setExpectedException('Audiens\AdForm\Exception\EntityInvalidException');
+        $this->setExpectedException(EntityInvalidException::class);
 
         $segmentUnique = $this->createFixture();
         $segmentUpdate = $this->createFixture();

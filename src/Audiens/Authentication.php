@@ -18,10 +18,22 @@ class Authentication
     protected $accessToken;
 
     /**
+     * @var string
+     */
+    protected $username;
+
+    /**
+     * @var string
+     */
+    protected $password;
+
+    /**
      * Class constructor
      *
      * @param string $username
      * @param string $password
+     *
+     * @throws OauthException
      */
     public function __construct($username, $password)
     {
@@ -65,14 +77,16 @@ class Authentication
      * Returns the Access Token, or try to reauthenticate if needed
      *
      * @return string
+     *
+     * @throws OauthException
      */
     public function getAccessToken()
     {
         // maybe the token will expire in next 10 seconds
         $expiryCutoff = new \DateTime('+10 seconds');
 
-        // if the token expires try to reauthenticate
-        if (!$this->accessToken or $this->getExpires() < $expiryCutoff->getTimestamp()) {
+        // if the token expires try to re-authenticate
+        if (!$this->accessToken || $this->getExpires() < $expiryCutoff->getTimestamp()) {
             $this->authenticate();
         }
 

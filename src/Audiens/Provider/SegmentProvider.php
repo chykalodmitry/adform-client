@@ -2,11 +2,13 @@
 
 namespace Audiens\AdForm\Provider;
 
+use Audiens\AdForm\Cache\CacheInterface;
 use Audiens\AdForm\Entity\Segment;
 use Audiens\AdForm\Entity\SegmentHydrator;
+use Audiens\AdForm\Exception\ApiException;
+use Audiens\AdForm\Exception\EntityInvalidException;
+use Audiens\AdForm\Exception\EntityNotFoundException;
 use Audiens\AdForm\HttpClient;
-use Audiens\AdForm\Exception;
-use Audiens\AdForm\Cache\CacheInterface;
 use GuzzleHttp\Exception\ClientException;
 
 /**
@@ -47,7 +49,7 @@ class SegmentProvider
      *
      * @param int $segmentId ID of the category
      *
-     * @throws Exception\EntityNotFoundException if the API call fails
+     * @throws EntityNotFoundException if the API call fails
      *
      * @return Segment
      */
@@ -79,7 +81,7 @@ class SegmentProvider
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw Exception\EntityNotFoundException::translate($segmentId, $responseBody, $responseCode);
+            throw EntityNotFoundException::translate($segmentId, $responseBody, $responseCode);
         }
     }
 
@@ -89,7 +91,7 @@ class SegmentProvider
      * @param int $limit
      * @param int $offset
      *
-     * @throws Exception\ApiException if the API call fails
+     * @throws ApiException if the API call fails
      *
      * @return array
      */
@@ -134,7 +136,7 @@ class SegmentProvider
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw Exception\ApiException::translate($responseBody, $responseCode);
+            throw ApiException::translate($responseBody, $responseCode);
         }
 
         return $segments;
@@ -146,8 +148,8 @@ class SegmentProvider
      * @param int $dataProviderId
      * @param int $limit
      * @param int $offset
-     *
-     * @throws Exception\ApiException if the API call fails
+
+     * @throws ApiException if the API call fails
      *
      * @return array
      */
@@ -192,7 +194,7 @@ class SegmentProvider
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw Exception\ApiException::translate($responseBody, $responseCode);
+            throw ApiException::translate($responseBody, $responseCode);
         }
 
         return $segments;
@@ -205,7 +207,7 @@ class SegmentProvider
      * @param int $limit
      * @param int $offset
      *
-     * @throws Exception\ApiException if the API call fails
+     * @throws ApiException if the API call fails
      *
      * @return array
      */
@@ -250,7 +252,7 @@ class SegmentProvider
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw Exception\ApiException::translate($responseBody, $responseCode);
+            throw ApiException::translate($responseBody, $responseCode);
         }
 
         return $segments;
@@ -263,7 +265,7 @@ class SegmentProvider
      * @param int $limit
      * @param int $offset
      *
-     * @throws Exception\ApiException if the API call fails
+     * @throws ApiException if the API call fails
      *
      * @return array
      */
@@ -308,7 +310,7 @@ class SegmentProvider
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw Exception\ApiException::translate($responseBody, $responseCode);
+            throw ApiException::translate($responseBody, $responseCode);
         }
 
         return $segments;
@@ -319,8 +321,8 @@ class SegmentProvider
      *
      * @param Segment $segment
      *
-     * @throws Exception\EntityInvalidException if the API returns a validation error
-     * @throws Exception\ApiException if the API call fails
+     * @throws EntityInvalidException if the API returns a validation error
+     * @throws ApiException if the API call fails
      *
      * @return Segment
      */
@@ -345,17 +347,7 @@ class SegmentProvider
 
             return $segment;
         } catch (ClientException $e) {
-            $response = $e->getResponse();
-            $responseBody = $response->getBody()->getContents();
-            $responseCode = $response->getStatusCode();
-
-            $error = json_decode($responseBody);
-
-            if (property_exists($error, 'modelState')) { // validation error
-                throw Exception\EntityInvalidException::invalid($responseBody, $responseCode, $error->modelState);
-            } else { // general error
-                throw Exception\ApiException::translate($responseBody, $responseCode);
-            }
+            $this->manageClientException($e);
         }
 
     }
@@ -365,8 +357,8 @@ class SegmentProvider
      *
      * @param Segment $segment
      *
-     * @throws Exception\EntityInvalidException if the API returns a validation error
-     * @throws Exception\ApiException if the API call fails
+     * @throws EntityInvalidException if the API returns a validation error
+     * @throws ApiException if the API call fails
      *
      * @return Segment
      */
@@ -391,19 +383,8 @@ class SegmentProvider
 
             return $segment;
         } catch (ClientException $e) {
-            $response = $e->getResponse();
-            $responseBody = $response->getBody()->getContents();
-            $responseCode = $response->getStatusCode();
-
-            $error = json_decode($responseBody);
-
-            if (property_exists($error, 'modelState')) { // validation error
-                throw Exception\EntityInvalidException::invalid($responseBody, $responseCode, $error->modelState);
-            } else { // general error
-                throw Exception\ApiException::translate($responseBody, $responseCode);
-            }
+            $this->manageClientException($e);
         }
-
     }
 
     /**
@@ -411,7 +392,7 @@ class SegmentProvider
      *
      * @param Segment $segment
      *
-     * @throws Exception\ApiException if the API call fails
+     * @throws ApiException if the API call fails
      *
      * @return Segment
      */
@@ -434,8 +415,57 @@ class SegmentProvider
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw Exception\ApiException::translate($responseBody, $responseCode);
+            throw ApiException::translate($responseBody, $responseCode);
         }
 
+    }
+
+    /**
+     * @param ClientException $exception
+     *
+     * @throws EntityInvalidException
+     * @throws ApiException
+     */
+    protected function manageClientException(ClientException $exception)
+    {
+        $response = $exception->getResponse();
+
+        if ($response === null) {
+            throw $exception;
+        }
+
+        $responseBody = $response->getBody()->getContents();
+        $responseCode = $response->getStatusCode();
+
+        $error = json_decode($responseBody);
+
+        // Validation
+        if (isset($error->modelState)) {
+            throw EntityInvalidException::invalid($responseBody, $responseCode, $error->modelState);
+        }
+
+        if (isset($error->reason, $error->params) && $error->reason === 'validationFailed') {
+            $errorMessages = [];
+            foreach ($error->params as $paramName => $paramArr) {
+                if (!\is_array($paramArr)) {
+                    $errorMessages[] = $paramName;
+
+                    continue;
+                }
+
+                foreach ($paramArr as $paramObj) {
+                    $errorMessages[] = isset($paramObj->message) ? $paramObj->message : $paramName;
+                }
+            }
+
+            throw EntityInvalidException::invalid(
+                $responseBody,
+                $responseCode,
+                \implode("\n", $errorMessages)
+            );
+        }
+
+        // Generic exception
+        throw ApiException::translate($responseBody, $responseCode);
     }
 }
