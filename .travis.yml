@@ -7,11 +7,8 @@ php:
   - 7.1
   - 7.2
 
-env:
-  - PHP_COVERAGE_VERSION="7.2"
-
 before_script:
-  - if [[ "$TRAVIS_PHP_VERSION" = "$PHP_COVERAGE_VERSION" ]]; then PHPUNIT_FLAGS="--coverage-clover=build/logs/clover.xml"; else PHPUNIT_FLAGS=""; fi
+  - if [[ "$TRAVIS_PHP_VERSION" = "7.2" ]]; then PHPUNIT_FLAGS="--coverage-clover=build/logs/clover.xml"; else PHPUNIT_FLAGS=""; fi
   - travis_retry composer global require hirak/prestissimo
   - travis_retry composer self-update
   - travis_retry composer install --no-interaction --prefer-dist --dev
@@ -20,5 +17,5 @@ script:
   - vendor/bin/phpunit -v $PHPUNIT_FLAGS
 
 after_success:
-  - if [[ "$TRAVIS_PHP_VERSION" = "$PHP_COVERAGE_VERSION" ]]; then php vendor/bin/php-coveralls -v; fi
-  - if [[ "$TRAVIS_PHP_VERSION" = "$PHP_COVERAGE_VERSION" ]]; then wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml; fi
+  - if [[ "$TRAVIS_PHP_VERSION" = "7.2" ]]; then php vendor/bin/php-coveralls -v; fi
+  - if [[ "$TRAVIS_PHP_VERSION" = "7.2" ]]; then wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml; fi
