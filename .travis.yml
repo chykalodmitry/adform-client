@@ -11,7 +11,8 @@ before_script:
   - if [[ "$TRAVIS_PHP_VERSION" = "7.2" ]]; then PHPUNIT_FLAGS="--coverage-clover=build/logs/clover.xml"; else PHPUNIT_FLAGS=""; fi
   - travis_retry composer global require hirak/prestissimo
   - travis_retry composer self-update
-  - travis_retry composer install --no-interaction --prefer-dist --dev
+  - travis_retry composer install --no-interaction --prefer-dist
+  - if [[ "$TRAVIS_PHP_VERSION" = "7.2" ]]; then travis_retry composer require --dev php-coveralls/php-coveralls
 
 script:
   - vendor/bin/phpunit -v $PHPUNIT_FLAGS
