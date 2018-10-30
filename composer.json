@@ -1,15 +1,19 @@
 {
   "name": "audiens/adform-client",
   "description": "PHP client for adform API",
+  "version": "1.0.0",
+
   "keywords": [
     "adform",
     "dmp",
     "client",
     "php"
   ],
+
   "type": "library",
   "homepage": "https://github.com/Audiens/adform-client",
   "license": "MIT",
+
   "authors": [
     {
       "name": "Francesco Panina",
@@ -18,28 +22,38 @@
     {
       "name": "Miloš Jovanović",
       "homepage": "https://github.com/toxonics"
+    },
+    {
+      "name": "Giacomo Furlan",
+      "homepage": "https://giacomofurlan.name/"
     }
   ],
+
   "require": {
-    "php": ">=5.5.0",
+    "php": ">=7.1",
     "ext-mbstring": "*",
     "ext-json": "*",
 
-    "myclabs/php-enum": "~1.4",
-    "league/oauth2-client": "^1.0",
-    "predis/predis": "^1.0",
+    "myclabs/php-enum": "^1.6",
+    "league/oauth2-client": "^1.4",
+    "predis/predis": "^1.1",
     "league/flysystem": "^1.0",
-    "guzzlehttp/guzzle": "^6.3.0"
+    "guzzlehttp/guzzle": "^6.3"
   },
+
   "require-dev": {
-    "phpunit/phpunit": "~4.8",
-    "vlucas/phpdotenv": "^2.5"
+    "phpunit/phpunit": "^7.4",
+    "vlucas/phpdotenv": "^2.5",
+    "ramsey/uuid": "^3.8",
+    "php-coveralls/php-coveralls": "^2.1"
   },
+
   "autoload": {
     "psr-4": {
       "Audiens\\AdForm\\": "src/Audiens/"
     }
   },
+
   "autoload-dev": {
     "psr-4": {
       "DMP\\Tests\\": "tests/dmp-client/"

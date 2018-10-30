@@ -1,23 +1,17 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 namespace Audiens\AdForm\Tests\Entity;
 
 use Audiens\AdForm\Entity\Segment;
 use Audiens\AdForm\Entity\SegmentHydrator;
+use PHPUnit\Framework\TestCase;
+use stdClass;
 
-/**
- * Class OauthClient
- *
- * @package OauthClient
- */
-class SegmentHydratorTest extends \PHPUnit_Framework_TestCase
+class SegmentHydratorTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function hydratorWillReturnSegmentObject()
+    public function test_hydratorWillReturnSegmentObject(): void
     {
-        $stdClass = new \stdClass();
+        $stdClass = new stdClass();
         $stdClass->id = 10;
         $stdClass->dataProviderId = 10000;
         $stdClass->status = 'active';
@@ -41,6 +35,6 @@ class SegmentHydratorTest extends \PHPUnit_Framework_TestCase
 
         $segment = SegmentHydrator::fromStdClass($stdClass);
 
-        $this->assertInstanceOf(Segment::class, $segment);
+        TestCase::assertInstanceOf(Segment::class, $segment);
     }
 }

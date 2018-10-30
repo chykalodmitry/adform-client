@@ -1,25 +1,18 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Audiens\AdForm\Cache;
 
-/**
- * Class BaseCache
- */
 class BaseCache
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $prefix;
 
-    /**
-     * @param string $providerPrefix
-     * @param string $uri
-     * @param string $query
-     *
-     * @return string
-     */
-    protected function getHash($providerPrefix, $uri, $query)
+    public function __construct(string $prefix)
+    {
+        $this->prefix = $prefix;
+    }
+
+    protected function getHash(string $providerPrefix, string $uri, array $query): string
     {
         return $this->prefix.strtolower($providerPrefix).'_'.md5($uri.'?'.http_build_query($query));
     }

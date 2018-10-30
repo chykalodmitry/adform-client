@@ -1,6 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Audiens\AdForm\Entity;
+
+use stdClass;
 
 /**
  * Class AudienceHydrator
@@ -9,13 +11,13 @@ class AudienceHydrator extends Audience
 {
     /**
      * Hydrate a category from a stdClass, intended to be used for
-     * instancing a category from json_decode()
+     * instancing an audience from \json_decode()
      *
-     * @param \stdClass $stdClass
+     * @param stdClass $stdClass
      *
      * @return Audience
      */
-    public static function fromStdClass(\stdClass $stdClass)
+    public static function fromStdClass(stdClass $stdClass): Audience
     {
         $audience = new Audience();
 

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Audiens\AdForm\Exception;
 
@@ -7,9 +7,9 @@ namespace Audiens\AdForm\Exception;
  */
 class RedisException extends SeverityAwareException
 {
-    const MESSAGE = 'Redis connection failed with message: %s';
+    protected const MESSAGE = 'Redis connection failed with message: %s';
 
-    public static function connect($message)
+    public static function connect($message): self
     {
         return new self (
             sprintf(self::MESSAGE, $message),

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Audiens\AdForm\Exception;
 
@@ -7,9 +7,9 @@ namespace Audiens\AdForm\Exception;
  */
 class ApiException extends SeverityAwareException
 {
-    const MESSAGE = 'API returned an error: %s';
+    protected const MESSAGE = 'API returned an error: %s';
 
-    public static function translate($message, $code)
+    public static function translate(string $message, int $code): self
     {
         return new self (
             sprintf(self::MESSAGE, $message),

@@ -1,44 +1,30 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace Audiens\AdForm\Provider;
+namespace Audiens\AdForm\Manager;
 
+use Audiens\AdForm\Cache\CacheInterface;
 use Audiens\AdForm\Entity\Agency;
 use Audiens\AdForm\Entity\AgencyHydrator;
+use Audiens\AdForm\Exception\ApiException;
+use Audiens\AdForm\Exception\EntityNotFoundException;
 use Audiens\AdForm\HttpClient;
-use Audiens\AdForm\Exception;
-use Audiens\AdForm\Cache\CacheInterface;
 use GuzzleHttp\Exception\ClientException;
+use RuntimeException;
 
-/**
- * Class AgencyProvider
- *
- * @package Adform
- */
-class AgencyProvider
+class AgencyManager
 {
-    /**
-     * @var HttpClient
-     */
+    /** @var HttpClient */
     protected $httpClient;
 
-    /**
-     * @var CacheInterface
-     */
+    /** @var CacheInterface */
     protected $cache;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $cachePrefix = 'agency';
 
-    /**
-     * @param HttpClient $httpClient
-     * @param CacheInterface|null $cache
-     */
     public function __construct(HttpClient $httpClient, CacheInterface $cache = null)
     {
         $this->httpClient = $httpClient;
-
         $this->cache = $cache;
     }
 
@@ -47,11 +33,12 @@ class AgencyProvider
      *
      * @param int $agencyId ID of the agency
      *
-     * @throws Exception\EntityNotFoundException if the API call fails
+     * @throws EntityNotFoundException if the API call fails
+     * @throws RuntimeException if the response is null
      *
      * @return Agency
      */
-    public function getItem($agencyId)
+    public function getItem(int $agencyId): Agency
     {
         // Endpoint URI
         $uri = sprintf('v1/agencies/%d', $agencyId);
@@ -68,7 +55,7 @@ class AgencyProvider
             if (!$data) {
                 $data = $this->httpClient->get($uri)->getBody()->getContents();
 
-                if ($this->cache and $data) {
+                if ($this->cache && $data) {
                     $this->cache->put($this->cachePrefix, $uri, [], $data);
                 }
             }
@@ -76,10 +63,13 @@ class AgencyProvider
             return AgencyHydrator::fromStdClass(json_decode($data));
         } catch (ClientException $e) {
             $response = $e->getResponse();
+            if ($response === null) {
+                throw new RuntimeException('Null response');
+            }
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw Exception\EntityNotFoundException::translate($agencyId, $responseBody, $responseCode);
+            throw EntityNotFoundException::translate($agencyId, $responseBody, $responseCode);
         }
     }
 
@@ -91,11 +81,12 @@ class AgencyProvider
      * @param bool $active
      * @param int $countryId
      *
-     * @throws Exception\ApiException if the API call fails
+     * @throws ApiException if the API call fails
+     * @throws RuntimeException if the response is null
      *
-     * @return array
+     * @return Agency[]
      */
-    public function getItems($limit = 1000, $offset = 0, $active = null, $countryId = null)
+    public function getItems(int $limit = 1000, int $offset = 0, ?bool $active = null, ?int $countryId = null): array
     {
         // Endpoint URI
         $uri = 'v1/agencies';
@@ -124,22 +115,25 @@ class AgencyProvider
             if (!$data) {
                 $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
 
-                if ($this->cache and $data) {
+                if ($this->cache && $data) {
                     $this->cache->put($this->cachePrefix, $uri, $options, $data);
                 }
             }
 
-            $classArray = json_decode($data);
+            $classArray = \json_decode($data);
 
             foreach ($classArray as $class) {
                 $agencies[] = AgencyHydrator::fromStdClass($class);
             }
         } catch (ClientException $e) {
             $response = $e->getResponse();
+            if ($response === null) {
+                throw new RuntimeException('Null response');
+            }
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw Exception\ApiException::translate($responseBody, $responseCode);
+            throw ApiException::translate($responseBody, $responseCode);
         }
 
         return $agencies;
@@ -154,11 +148,12 @@ class AgencyProvider
      * @param bool $active
      * @param int $countryId
      *
-     * @throws Exception\ApiException if the API call fails
+     * @throws ApiException if the API call fails
+     * @throws RuntimeException if the response is null
      *
-     * @return array
+     * @return Agency[]
      */
-    public function getItemsDataProvider($dataProviderId, $limit = 1000, $offset = 0, $active = null, $countryId = null)
+    public function getItemsDataProvider(int $dataProviderId, int $limit = 1000, int $offset = 0, ?bool $active = null, ?int $countryId = null): array
     {
         // Endpoint URI
         $uri = sprintf('v1/dataproviders/%d/agencies', $dataProviderId);
@@ -187,22 +182,25 @@ class AgencyProvider
             if (!$data) {
                 $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
 
-                if ($this->cache and $data) {
+                if ($this->cache && $data) {
                     $this->cache->put($this->cachePrefix, $uri, $options, $data);
                 }
             }
 
-            $classArray = json_decode($data);
+            $classArray = \json_decode($data);
 
             foreach ($classArray as $class) {
                 $agencies[] = AgencyHydrator::fromStdClass($class);
             }
         } catch (ClientException $e) {
             $response = $e->getResponse();
+            if ($response === null) {
+                throw new RuntimeException('Null response');
+            }
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw Exception\ApiException::translate($responseBody, $responseCode);
+            throw ApiException::translate($responseBody, $responseCode);
         }
 
         return $agencies;

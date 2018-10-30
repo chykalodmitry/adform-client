@@ -1,81 +1,63 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Audiens\AdForm\Entity;
 
+use DateTime;
 use JsonSerializable;
+use stdClass;
 
 /**
  * Class Audience
  */
 class Audience implements JsonSerializable
 {
-    /**
-     * @var string
-     */
+    /** @var string|null */
     protected $segmentId;
 
-    /**
-     * @var \DateTime
-     */
+    /** @var DateTime|null */
     protected $date;
 
-    /**
-     * @var int
-     */
+    /** @var int|null */
     protected $total;
 
-    /**
-     * @return string
-     */
-    public function getSegmentId()
+    public function getSegmentId(): ?string
     {
         return $this->segmentId;
     }
 
-    /**
-     * @param string $segmentId
-     */
-    public function setSegmentId($segmentId)
+    public function setSegmentId(string $segmentId): void
     {
         $this->segmentId = $segmentId;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getDate()
+    public function getDate(): ?DateTime
     {
         return $this->date;
     }
 
-    /**
-     * @param \DateTime $date
-     */
-    public function setDate($date)
+    public function setDate(DateTime $date): void
     {
         $this->date = $date;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotal()
+    public function getTotal(): ?int
     {
         return $this->total;
     }
 
-    /**
-     * @param int $total
-     */
-    public function setTotal($total)
+    public function setTotal(int $total): void
     {
         $this->total = $total;
     }
 
-
-    function jsonSerialize()
+    public function jsonSerialize()
     {
-        // TODO: Implement jsonSerialize() method.
-    }
+        $obj = new stdClass();
 
+        $obj->segmentId = $this->segmentId;
+        $obj->date = $obj->date ? $this->date->format('c'): null;
+        $obj->total = $this->total;
+
+        return $obj;
+    }
 }

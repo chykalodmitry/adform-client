@@ -1,25 +1,24 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 namespace Audiens\AdForm\Tests\Entity;
 
-/**
- * Class AgencyHydratorTest
- */
-class AgencyHydratorTest extends \PHPUnit_Framework_TestCase
+use Audiens\AdForm\Entity\Agency;
+use Audiens\AdForm\Entity\AgencyHydrator;
+use PHPUnit\Framework\TestCase;
+use stdClass;
+
+class AgencyHydratorTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function hydratorWillReturnCategoryObject()
+    public function test_hydratorWillReturnCategoryObject(): void
     {
-        $stdClass = new \stdClass();
+        $stdClass = new stdClass();
         $stdClass->id = 10;
         $stdClass->name = 'testAgency';
         $stdClass->active = true;
         $stdClass->countryId = 50;
 
-        $agency = \Audiens\AdForm\Entity\AgencyHydrator::fromStdClass($stdClass);
+        $agency = AgencyHydrator::fromStdClass($stdClass);
 
-        $this->assertInstanceOf(\Audiens\AdForm\Entity\Agency::class, $agency);
+        TestCase::assertInstanceOf(Agency::class, $agency);
     }
 }

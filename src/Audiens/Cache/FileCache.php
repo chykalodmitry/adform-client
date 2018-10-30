@@ -1,54 +1,29 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Audiens\AdForm\Cache;
 
-use League\Flysystem\Filesystem;
 use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem;
 
-/**
- * Class FileCache
- */
 class FileCache extends BaseCache implements CacheInterface
 {
-    /**
-     * @var Filesystem
-     */
+    /** @var Filesystem */
     private $filesystem;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $ttl;
 
-    /**
-     * @var string
-     */
-    protected $prefix;
-
-    /**
-     * @param string $path
-     * @param int $ttl
-     * @param string $prefix
-     */
-    public function __construct($path, $ttl = 3600, $prefix = "adform_")
+    public function __construct(string $path, int $ttl = 3600, string $prefix = 'adform_')
     {
+        parent::__construct($path);
+
         $adapter = new Local($path);
         $this->filesystem = new Filesystem($adapter);
 
         $this->ttl = $ttl;
-
-        $this->prefix = $prefix;
     }
 
-    /**
-     * @param string $providerPrefix
-     * @param string $uri
-     * @param string $query
-     * @param string $data
-     *
-     * @return bool
-     */
-    public function put($providerPrefix, $uri, $query, $data)
+    public function put(string $providerPrefix, string $uri, array $query, string $data): bool
     {
         $hash = $this->getHash($providerPrefix, $uri, $query);
 
@@ -56,18 +31,16 @@ class FileCache extends BaseCache implements CacheInterface
     }
 
     /**
-     * @param string $providerPrefix
-     * @param string $uri
-     * @param string $query
+     * {@inheritdoc}
      *
-     * @return bool|mixed
+     * @throws \League\Flysystem\FileNotFoundException
      */
-    public function get($providerPrefix, $uri, $query)
+    public function get(string $providerPrefix, string $uri, array $query)
     {
         $hash = $this->getHash($providerPrefix, $uri, $query);
         $ttlCutoff = time() - $this->ttl;
 
-        if ($this->filesystem->has($hash) and $this->filesystem->getTimestamp($hash) > $ttlCutoff) {
+        if ($this->filesystem->has($hash) && $this->filesystem->getTimestamp($hash) > $ttlCutoff) {
             $data = $this->filesystem->read($hash);
 
             if (!empty($data)) {
@@ -79,13 +52,11 @@ class FileCache extends BaseCache implements CacheInterface
     }
 
     /**
-     * @param string $providerPrefix
-     * @param string $uri
-     * @param string $query
+     * {@inheritdoc}
      *
-     * @return bool
+     * @throws \League\Flysystem\FileNotFoundException
      */
-    public function delete($providerPrefix, $uri, $query)
+    public function delete(string $providerPrefix, string $uri, array $query): bool
     {
         $hash = $this->getHash($providerPrefix, $uri, $query);
 
@@ -97,18 +68,18 @@ class FileCache extends BaseCache implements CacheInterface
     }
 
     /**
-     * @param string $providerPrefix
+     * {@inheritdoc}
      *
-     * @return bool
+     * @throws \League\Flysystem\FileNotFoundException
      */
-    public function invalidate($providerPrefix)
+    public function invalidate(string $providerPrefix): bool
     {
         $pattern = $this->prefix.strtolower($providerPrefix).'_';
 
         $files = $this->filesystem->listContents();
         foreach ($files as $file) {
-            if (stripos($file['filename'], $pattern) === 0) {
-                $this->filesystem->delete($file['filename']);
+            if (stripos($file['basename'], $pattern) === 0) {
+                $this->filesystem->delete($file['basename']);
             }
         }
 

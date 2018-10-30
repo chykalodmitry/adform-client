@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Audiens\AdForm\Entity;
 
 use Audiens\AdForm\Enum\SegmentStatus;
+use stdClass;
 
 /**
  * Class SegmentHydrator
@@ -11,17 +12,17 @@ class SegmentHydrator extends Segment
 {
     /**
      * Hydrate a segment from a stdClass, intended to be used for
-     * instancing a segment from json_decode()
+     * instancing a segment from \json_decode()
      *
-     * @param \stdClass $stdClass
+     * @param stdClass $stdClass
      *
      * @return Segment
      */
-    public static function fromStdClass(\stdClass $stdClass)
+    public static function fromStdClass(stdClass $stdClass): Segment
     {
         $segment = new Segment();
 
-        $segment->id = $stdClass->id;
+        $segment->id = (int) $stdClass->id;
         $segment->dataProviderId = (int)$stdClass->dataProviderId;
         $segment->status = new SegmentStatus($stdClass->status);
         $segment->categoryId = (int)$stdClass->categoryId;

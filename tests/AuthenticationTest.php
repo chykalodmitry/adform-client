@@ -1,23 +1,18 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 namespace Audiens\AdForm\Tests;
 
 use Audiens\AdForm\Authentication;
+use PHPUnit\Framework\TestCase;
 
-/**
- * Class AuthenticationTest
- */
-class AuthenticationTest extends \PHPUnit_Framework_TestCase
+class AuthenticationTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function autenticateWillReturnAnAuthenticationObject()
+    public function test_authenticateWillReturnAnAuthenticationObject(): void
     {
         $auth = new Authentication(SANDBOX_USERNAME, SANDBOX_PASSWORD);
 
-        $this->assertInstanceOf(Authentication::class, $auth);
+        TestCase::assertInstanceOf(Authentication::class, $auth);
 
-        $this->assertNotEmpty($auth->getAccessToken());
+        TestCase::assertNotEmpty($auth->getAccessToken());
     }
 }

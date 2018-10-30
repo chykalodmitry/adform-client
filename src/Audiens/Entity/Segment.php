@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Audiens\AdForm\Entity;
 
 use Audiens\AdForm\Enum\SegmentStatus;
+use DateTime;
 use JsonSerializable;
 
 /**
@@ -10,498 +11,304 @@ use JsonSerializable;
  */
 class Segment implements JsonSerializable
 {
-    /**
-     * @var int
-     */
+    /** @var int|null */
     protected $id;
 
-    /**
-     * @var int
-     */
+    /** @var int|null */
     protected $dataProviderId;
 
-    /**
-     * @var SegmentStatus
-     */
+    /** @var SegmentStatus|null */
     protected $status;
 
-    /**
-     * @var int
-     */
+    /** @var int|null */
     protected $categoryId;
 
-    /**
-     * @var int
-     */
+    /** @var string|null */
     protected $refId;
 
-    /**
-     * @var float
-     */
+    /** @var float|null */
     protected $fee;
 
-    /**
-     * @var int
-     */
+    /** @var int|null */
     protected $ttl;
 
-    /**
-     * @var string
-     */
+    /** @var string|null */
     protected $name;
 
-    /**
-     * @var string
-     */
+    /** @var string|null */
     protected $formula;
 
-    /**
-     * @var string
-     */
+    /** @var string|null */
     protected $extractionRule;
 
-    /**
-     * @var int
-     */
+    /** @var int|null */
     protected $audience;
 
-    /**
-     * @var array
-     */
+    /** @var array|null */
     protected $audienceBySources;
 
-    /**
-     * @var array
-     */
+    /** @var array|null */
     protected $audienceByUserIdentityType;
 
-    /**
-     * @var bool
-     */
+    /** @var bool|null */
     protected $isExtended;
 
-    /**
-     * @var int
-     */
+    /** @var int|null */
     protected $extensionThreshold;
 
-    /**
-     * @var int
-     */
+    /** @var int|null */
     protected $frequency;
 
-    /**
-     * @var bool
-     */
+    /** @var bool|null */
     protected $isCrossDevice;
 
-    /**
-     * @var bool
-     */
+    /** @var bool|null */
     protected $hasDataUsagePermissions;
 
-    /**
-     * @var \DateTime
-     */
+    /** @var DateTime|null */
     protected $updatedAt;
 
-    /**
-     * @var \DateTime
-     */
+    /** @var DateTime|null */
     protected $createdAt;
 
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
+    public function getUpdatedAt(): ?DateTime
     {
         return $this->updatedAt;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
+    public function getCreatedAt(): ?DateTime
     {
         return $this->createdAt;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-
-    /**
-     * @param int $id
-     *
-     * @return Segment
-     */
-    public function setId($id)
+    public function setId(int $id): self
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getDataProviderId()
+    public function getDataProviderId(): ?int
     {
         return $this->dataProviderId;
     }
 
-    /**
-     * @param int $dataProviderId
-     *
-     * @return Segment
-     */
-    public function setDataProviderId($dataProviderId)
+    public function setDataProviderId(int $dataProviderId): self
     {
         $this->dataProviderId = $dataProviderId;
 
         return $this;
     }
 
-    /**
-     * @return SegmentStatus
-     */
-    public function getStatus()
+    public function getStatus(): ?SegmentStatus
     {
         return $this->status;
     }
 
-    /**
-     * @param SegmentStatus $status
-     *
-     * @return Segment
-     */
-    public function setStatus($status)
+    public function setStatus(SegmentStatus $status): self
     {
         $this->status = $status;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getCategoryId()
+    public function getCategoryId(): ?int
     {
         return $this->categoryId;
     }
 
-    /**
-     * @param int $categoryId
-     *
-     * @return Segment
-     */
-    public function setCategoryId($categoryId)
+    public function setCategoryId(int $categoryId): self
     {
         $this->categoryId = $categoryId;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getRefId()
+    public function getRefId(): ?string
     {
         return $this->refId;
     }
 
-    /**
-     * @param int $refId
-     *
-     * @return Segment
-     */
-    public function setRefId($refId)
+    public function setRefId(string $refId): self
     {
         $this->refId = $refId;
 
         return $this;
     }
 
-    /**
-     * @return float
-     */
-    public function getFee()
+    public function getFee(): ?float
     {
         return $this->fee;
     }
 
-    /**
-     * @param float $fee
-     *
-     * @return Segment
-     */
-    public function setFee($fee)
+    public function setFee(float $fee): self
     {
         $this->fee = $fee;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getTtl()
+    public function getTtl(): ?int
     {
         return $this->ttl;
     }
 
-    /**
-     * @param int $ttl
-     *
-     * @return Segment
-     */
-    public function setTtl($ttl)
+    public function setTtl(int $ttl): self
     {
         $this->ttl = $ttl;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return Segment
-     */
-    public function setName($name)
+    public function setName(string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getFormula()
+    public function getFormula(): ?string
     {
         return $this->formula;
     }
 
-    /**
-     * @param string $formula
-     *
-     * @return Segment
-     */
-    public function setFormula($formula)
+    public function setFormula(string $formula): self
     {
         $this->formula = $formula;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getExtractionRule()
+    public function getExtractionRule(): ?string
     {
         return $this->extractionRule;
     }
 
-    /**
-     * @param string $extractionRule
-     *
-     * @return Segment
-     */
-    public function setExtractionRule($extractionRule)
+    public function setExtractionRule(string $extractionRule): self
     {
         $this->extractionRule = $extractionRule;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getAudience()
+    public function getAudience(): ?int
     {
         return $this->audience;
     }
 
-    /**
-     * @param string $audience
-     *
-     * @return Segment
-     */
-    public function setAudience($audience)
+    public function setAudience(string $audience): self
     {
         $this->audience = $audience;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getAudienceBySources()
+    public function getAudienceBySources(): ?array
     {
         return $this->audienceBySources;
     }
 
-    /**
-     * @param string $audienceBySources
-     *
-     * @return Segment
-     */
-    public function setAudienceBySources($audienceBySources)
+    public function setAudienceBySources(string $audienceBySources): self
     {
         $this->audienceBySources = $audienceBySources;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getAudienceByUserIdentityType()
+    public function getAudienceByUserIdentityType(): ?array
     {
         return $this->audienceByUserIdentityType;
     }
 
-    /**
-     * @param string $audienceByUserIdentityType
-     *
-     * @return Segment
-     */
-    public function setAudienceByUserIdentityType($audienceByUserIdentityType)
+    public function setAudienceByUserIdentityType(string $audienceByUserIdentityType): self
     {
         $this->audienceByUserIdentityType = $audienceByUserIdentityType;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getIsExtended()
+    public function getIsExtended(): ?bool
     {
         return $this->isExtended;
     }
 
-    /**
-     * @param string $isExtended
-     *
-     * @return Segment
-     */
-    public function setIsExtended($isExtended)
+    public function setIsExtended(bool $isExtended): self
     {
         $this->isExtended = $isExtended;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getExtensionThreshold()
+    public function getExtensionThreshold(): ?int
     {
         return $this->extensionThreshold;
     }
 
-    /**
-     * @param string $extensionThreshold
-     *
-     * @return Segment
-     */
-    public function setExtensionThreshold($extensionThreshold)
+    public function setExtensionThreshold(int $extensionThreshold): self
     {
         $this->extensionThreshold = $extensionThreshold;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getFrequency()
+    public function getFrequency(): ?int
     {
         return $this->frequency;
     }
 
-    /**
-     * @param int $frequency
-     *
-     * @return Segment
-     */
-    public function setFrequency($frequency)
+    public function setFrequency(int $frequency): self
     {
         $this->frequency = $frequency;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getIsCrossDevice()
+    public function getIsCrossDevice(): ?bool
     {
         return $this->isCrossDevice;
     }
 
-    /**
-     * @param string $isCrossDevice
-     *
-     * @return Segment
-     */
-    public function setIsCrossDevice($isCrossDevice)
+    public function setIsCrossDevice(bool $isCrossDevice): self
     {
         $this->isCrossDevice = $isCrossDevice;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getHasDataUsagePermissions()
+    public function getHasDataUsagePermissions(): ?bool
     {
         return $this->hasDataUsagePermissions;
     }
 
-    /**
-     * @param string $hasDataUsagePermissions
-     *
-     * @return Segment
-     */
-    public function setHasDataUsagePermissions($hasDataUsagePermissions)
+    public function setHasDataUsagePermissions(bool $hasDataUsagePermissions): self
     {
         $this->hasDataUsagePermissions = $hasDataUsagePermissions;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function jsonSerialize()
     {
         $json = new \stdClass();
 
         // might not be set for a new segment
-        if (!is_null($this->id)) {
+        if ($this->id !== null) {
             $json->id = $this->id;
         }
 
         $json->dataProviderId = (int)$this->dataProviderId;
 
-        if (!is_null($this->status)) {
+        if ($this->status !== null) {
             $json->status = $this->status->getValue();
         } else {
             $json->status = null;
@@ -514,12 +321,12 @@ class Segment implements JsonSerializable
         $json->name = $this->name;
 
         // might not be set in JSON
-        if (isset($this->formula)) {
+        if ($this->formula !== null) {
             $json->formula = $this->formula;
         }
 
         // might not be set in JSON
-        if (isset($this->extractionRule)) {
+        if ($this->extractionRule !== null) {
             $json->extractionRule = $this->extractionRule;
         }
 
@@ -529,7 +336,7 @@ class Segment implements JsonSerializable
         $json->isExtended = (bool)$this->isExtended;
 
         // might not be set in JSON
-        if (isset($this->extensionThreshold)) {
+        if ($this->extensionThreshold !== null) {
             $json->extensionThreshold = (bool)$this->extensionThreshold;
         }
 
@@ -538,12 +345,12 @@ class Segment implements JsonSerializable
         $json->hasDataUsagePermissions = (bool)$this->hasDataUsagePermissions;
 
         // might not be set for a new segment
-        if (!is_null($this->createdAt)) {
+        if ($this->createdAt !== null) {
             $json->createdAt = $this->createdAt->format('c');
         }
 
         // might not be set for a new segment
-        if (!is_null($this->updatedAt)) {
+        if ($this->updatedAt !== null) {
             $json->updatedAt = $this->updatedAt->format('c');
         }
 

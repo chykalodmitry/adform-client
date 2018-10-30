@@ -1,6 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace Audiens\AdForm\Provider;
+namespace Audiens\AdForm\Manager;
 
 use Audiens\AdForm\Cache\CacheInterface;
 use Audiens\AdForm\Entity\Segment;
@@ -11,36 +11,20 @@ use Audiens\AdForm\Exception\EntityNotFoundException;
 use Audiens\AdForm\HttpClient;
 use GuzzleHttp\Exception\ClientException;
 
-/**
- * Class Adform
- *
- * @package Adform
- */
-class SegmentProvider
+class SegmentManager
 {
-    /**
-     * @var HttpClient
-     */
+    /** @var HttpClient */
     protected $httpClient;
 
-    /**
-     * @var CacheInterface
-     */
+    /** @var CacheInterface */
     protected $cache;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $cachePrefix = 'segment';
 
-    /**
-     * @param HttpClient          $httpClient
-     * @param CacheInterface|null $cache
-     */
-    public function __construct(HttpClient $httpClient, CacheInterface $cache = null)
+    public function __construct(HttpClient $httpClient, ?CacheInterface $cache = null)
     {
         $this->httpClient = $httpClient;
-
         $this->cache = $cache;
     }
 
@@ -53,7 +37,7 @@ class SegmentProvider
      *
      * @return Segment
      */
-    public function getItem($segmentId)
+    public function getItem($segmentId): Segment
     {
         // Endpoint URI
         $uri = sprintf('v1/segments/%d', $segmentId);
@@ -70,7 +54,7 @@ class SegmentProvider
             if (!$data) {
                 $data = $this->httpClient->get($uri)->getBody()->getContents();
 
-                if ($this->cache and $data) {
+                if ($this->cache && $data) {
                     $this->cache->put($this->cachePrefix, $uri, [], $data);
                 }
             }
@@ -78,6 +62,9 @@ class SegmentProvider
             return SegmentHydrator::fromStdClass(json_decode($data));
         } catch (ClientException $e) {
             $response = $e->getResponse();
+            if ($response === null) {
+                throw $e;
+            }
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
@@ -93,9 +80,9 @@ class SegmentProvider
      *
      * @throws ApiException if the API call fails
      *
-     * @return array
+     * @return Segment[]
      */
-    public function getItems($limit = 1000, $offset = 0)
+    public function getItems(int $limit = 1000, int $offset = 0): array
     {
         // Endpoint URI
         $uri = 'v1/segments';
@@ -121,18 +108,21 @@ class SegmentProvider
             if (!$data) {
                 $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
 
-                if ($this->cache and $data) {
+                if ($this->cache && $data) {
                     $this->cache->put($this->cachePrefix, $uri, $options, $data);
                 }
             }
 
-            $classArray = json_decode($data);
+            $classArray = \json_decode($data);
 
             foreach ($classArray as $class) {
                 $segments[] = SegmentHydrator::fromStdClass($class);
             }
         } catch (ClientException $e) {
             $response = $e->getResponse();
+            if ($response === null) {
+                throw $e;
+            }
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
@@ -151,9 +141,9 @@ class SegmentProvider
 
      * @throws ApiException if the API call fails
      *
-     * @return array
+     * @return Segment[]
      */
-    public function getItemsDataProvider($dataProviderId, $limit = 1000, $offset = 0)
+    public function getItemsDataProvider(int $dataProviderId, int $limit = 1000, int $offset = 0): array
     {
         // Endpoint URI
         $uri = sprintf('v1/dataproviders/%d/segments', $dataProviderId);
@@ -179,18 +169,21 @@ class SegmentProvider
             if (!$data) {
                 $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
 
-                if ($this->cache and $data) {
+                if ($this->cache && $data) {
                     $this->cache->put($this->cachePrefix, $uri, $options, $data);
                 }
             }
 
-            $classArray = json_decode($data);
+            $classArray = \json_decode($data);
 
             foreach ($classArray as $class) {
                 $segments[] = SegmentHydrator::fromStdClass($class);
             }
         } catch (ClientException $e) {
             $response = $e->getResponse();
+            if ($response === null) {
+                throw $e;
+            }
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
@@ -209,9 +202,9 @@ class SegmentProvider
      *
      * @throws ApiException if the API call fails
      *
-     * @return array
+     * @return Segment[]
      */
-    public function getItemsCategory($categoryId, $limit = 1000, $offset = 0)
+    public function getItemsCategory(int $categoryId, int $limit = 1000, int $offset = 0): array
     {
         // Endpoint URI
         $uri = sprintf('v1/categories/%d/segments', $categoryId);
@@ -237,18 +230,21 @@ class SegmentProvider
             if (!$data) {
                 $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
 
-                if ($this->cache and $data) {
+                if ($this->cache && $data) {
                     $this->cache->put($this->cachePrefix, $uri, $options, $data);
                 }
             }
 
-            $classArray = json_decode($data);
+            $classArray = \json_decode($data);
 
             foreach ($classArray as $class) {
                 $segments[] = SegmentHydrator::fromStdClass($class);
             }
         } catch (ClientException $e) {
             $response = $e->getResponse();
+            if ($response === null) {
+                throw $e;
+            }
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
@@ -267,9 +263,9 @@ class SegmentProvider
      *
      * @throws ApiException if the API call fails
      *
-     * @return array
+     * @return Segment[]
      */
-    public function getItemsDataConsumer($dataConsumerId, $limit = 1000, $offset = 0)
+    public function getItemsDataConsumer(int $dataConsumerId, int $limit = 1000, int $offset = 0): array
     {
         // Endpoint URI
         $uri = sprintf('v1/dataconsumers/%d/segments', $dataConsumerId);
@@ -295,18 +291,21 @@ class SegmentProvider
             if (!$data) {
                 $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
 
-                if ($this->cache and $data) {
+                if ($this->cache && $data) {
                     $this->cache->put($this->cachePrefix, $uri, $options, $data);
                 }
             }
 
-            $classArray = json_decode($data);
+            $classArray = \json_decode($data);
 
             foreach ($classArray as $class) {
                 $segments[] = SegmentHydrator::fromStdClass($class);
             }
         } catch (ClientException $e) {
             $response = $e->getResponse();
+            if ($response === null) {
+                throw $e;
+            }
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
@@ -326,7 +325,7 @@ class SegmentProvider
      *
      * @return Segment
      */
-    public function create(Segment $segment)
+    public function create(Segment $segment): Segment
     {
         // Endpoint URI
         $uri = 'v1/segments';
@@ -340,16 +339,15 @@ class SegmentProvider
 
             $segment = SegmentHydrator::fromStdClass(json_decode($data));
 
-            if ($this->cache and $data) {
+            if ($this->cache && $data) {
                 $this->cache->invalidate($this->cachePrefix);
                 $this->cache->put($this->cachePrefix, $uri.'/'.$segment->getId(), [], $data);
             }
-
-            return $segment;
         } catch (ClientException $e) {
             $this->manageClientException($e);
         }
 
+        return $segment;
     }
 
     /**
@@ -362,7 +360,7 @@ class SegmentProvider
      *
      * @return Segment
      */
-    public function update(Segment $segment)
+    public function update(Segment $segment): Segment
     {
         // Endpoint URI
         $uri = sprintf('v1/segments/%d', $segment->getId());
@@ -376,15 +374,15 @@ class SegmentProvider
 
             $segment = SegmentHydrator::fromStdClass(json_decode($data));
 
-            if ($this->cache and $data) {
+            if ($this->cache && $data) {
                 $this->cache->invalidate($this->cachePrefix);
                 $this->cache->put($this->cachePrefix, $uri.'/'.$segment->getId(), [], $data);
             }
-
-            return $segment;
         } catch (ClientException $e) {
             $this->manageClientException($e);
         }
+
+        return $segment;
     }
 
     /**
@@ -394,9 +392,9 @@ class SegmentProvider
      *
      * @throws ApiException if the API call fails
      *
-     * @return Segment
+     * @return bool
      */
-    public function delete(Segment $segment)
+    public function delete(Segment $segment): bool
     {
         // Endpoint URI
         $uri = sprintf('v1/segments/%d', $segment->getId());
@@ -408,16 +406,18 @@ class SegmentProvider
             if ($this->cache) {
                 $this->cache->invalidate($this->cachePrefix);
             }
-
-            return true;
         } catch (ClientException $e) {
             $response = $e->getResponse();
+            if ($response === null) {
+                throw $e;
+            }
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
             throw ApiException::translate($responseBody, $responseCode);
         }
 
+        return true;
     }
 
     /**
@@ -426,7 +426,7 @@ class SegmentProvider
      * @throws EntityInvalidException
      * @throws ApiException
      */
-    protected function manageClientException(ClientException $exception)
+    protected function manageClientException(ClientException $exception): void
     {
         $response = $exception->getResponse();
 
@@ -437,7 +437,7 @@ class SegmentProvider
         $responseBody = $response->getBody()->getContents();
         $responseCode = $response->getStatusCode();
 
-        $error = json_decode($responseBody);
+        $error = \json_decode($responseBody);
 
         // Validation
         if (isset($error->modelState)) {
@@ -454,14 +454,14 @@ class SegmentProvider
                 }
 
                 foreach ($paramArr as $paramObj) {
-                    $errorMessages[] = isset($paramObj->message) ? $paramObj->message : $paramName;
+                    $errorMessages[] = $paramObj->message ?? $paramName;
                 }
             }
 
             throw EntityInvalidException::invalid(
                 $responseBody,
                 $responseCode,
-                \implode("\n", $errorMessages)
+                $errorMessages
             );
         }
 

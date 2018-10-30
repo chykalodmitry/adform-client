@@ -3,32 +3,23 @@
 namespace Audiens\AdForm;
 
 use GuzzleHttp\Client as GuzzleClient;
-use GuzzleHttp\Exception;
 use Psr\Http\Message\ResponseInterface;
 
-/**
- * Class HttpClient
- *
- * @package Adform
- */
 class HttpClient
 {
-    /**
-     * @var Authentication.
-     */
+    /** @var Authentication */
     protected $authentication;
 
-    /**
-     * @param Authentication $authentication
-     * @param array $config
-     */
+    /** @var GuzzleClient */
+    protected $guzzle;
+
     public function __construct($authentication, array $config = [])
     {
         $this->authentication = $authentication;
 
         // Guzzle
         $this->guzzle = new GuzzleClient([
-            'debug' => isset($config['debug']) ? $config['debug'] : false,
+            'debug' => $config['debug'] ?? false,
             'base_uri' => Client::BASE_URL,
             'headers' => [
                 'User-Agent' => 'Audiens',
@@ -38,54 +29,22 @@ class HttpClient
         ]);
     }
 
-    /**
-     * GET request
-     *
-     * @param string $uri
-     * @param array $options
-     *
-     * @return ResponseInterface
-     */
-    public function get($uri, array $options = [])
+    public function get(string $uri, array $options = []): ResponseInterface
     {
         return $this->request('GET', $uri, $options);
     }
 
-    /**
-     * POST request
-     *
-     * @param string $uri
-     * @param array $options
-     *
-     * @return ResponseInterface
-     */
-    public function post($uri, array $options = [])
+    public function post(string $uri, array $options = []): ResponseInterface
     {
         return $this->request('POST', $uri, $options);
     }
 
-    /**
-     * PUT request
-     *
-     * @param string $uri
-     * @param array $options
-     *
-     * @return ResponseInterface
-     */
-    public function put($uri, array $options = [])
+    public function put(string $uri, array $options = []): ResponseInterface
     {
         return $this->request('PUT', $uri, $options);
     }
 
-    /**
-     * DELETE request
-     *
-     * @param string $uri
-     * @param array $options
-     *
-     * @return ResponseInterface
-     */
-    public function delete($uri, array $options = [])
+    public function delete(string $uri, array $options = []): ResponseInterface
     {
         return $this->request('DELETE', $uri, $options);
     }
@@ -96,14 +55,17 @@ class HttpClient
      *
      * @param string $method
      * @param string $uri
-     * @param array $options
+     * @param array  $options
      *
      * @return ResponseInterface
+     *
+     * @throws Exception\OauthException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function request($method, $uri, array $options = [])
+    public function request(string $method, string $uri, array $options = []): ResponseInterface
     {
         // inject Oauth2 Access Token on each request
-        // if it expires try to reauthenticate
+        // if it expires try to re-authenticate
         $options['headers']['Authorization'] = 'Bearer '.$this->authentication->getAccessToken();
 
         return $this->guzzle->request($method, $uri, $options);

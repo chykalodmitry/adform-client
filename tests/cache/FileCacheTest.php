@@ -1,39 +1,33 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 namespace Audiens\AdForm\Tests\Entity;
 
 use Audiens\AdForm\Cache\FileCache;
+use PHPUnit\Framework\TestCase;
 
-/**
- * Class CategoryHydratorTest
- */
-class FileCacheTest extends \PHPUnit_Framework_TestCase
+class FileCacheTest extends TestCase
 {
     /** @var FileCache */
     private $fileCache;
 
-    public function setUp()
+    public function setUp(): void
     {
-
         $fileCache = new FileCache('.');
 
         $this->fileCache = $fileCache;
     }
 
-    /**
-     * @test
-     */
-    public function file_cache_will_store_the_data_and_can_be_invalidated()
+    public function test_fileCacheWillStoreTheDataAndCanBeInvalidated(): void
     {
+        $prefix = 'a_prefix';
+        $uri = 'a_uri';
+        $query = ['a_query'];
+        $content = 'some_data';
 
-        $this->fileCache->put('a_prefix','a_uri',['a_query'],'some_data');
-
-        $this->assertEquals('some_data',$this->fileCache->get('a_prefix','a_uri',['a_query']));
+        $this->fileCache->put($prefix, $uri, $query, $content);
+        TestCase::assertEquals($content, $this->fileCache->get($prefix, $uri, $query));
 
         $this->fileCache->invalidate('a_prefix');
-
-        $this->assertFalse($this->fileCache->get('a_prefix','a_uri',['a_query']));
-
+        TestCase::assertFalse($this->fileCache->get('a_prefix','a_uri', ['a_query']));
     }
-
 }

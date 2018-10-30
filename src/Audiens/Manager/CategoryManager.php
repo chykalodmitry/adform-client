@@ -1,6 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace Audiens\AdForm\Provider;
+namespace Audiens\AdForm\Manager;
 
 use Audiens\AdForm\Cache\CacheInterface;
 use Audiens\AdForm\Entity\Category;
@@ -11,38 +11,20 @@ use Audiens\AdForm\Exception\EntityNotFoundException;
 use Audiens\AdForm\HttpClient;
 use GuzzleHttp\Exception\ClientException;
 
-/**
- * Class Adform
- *
- * @package Adform
- */
-class CategoryProvider
+class CategoryManager
 {
-    /**
-     * @var HttpClient
-     */
+    /** @var HttpClient */
     protected $httpClient;
 
-    /**
-     * @var CacheInterface
-     */
+    /** @var CacheInterface */
     protected $cache;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $cachePrefix = 'category';
 
-    /**
-     * Constructor.
-     *
-     * @param HttpClient $httpClient
-     * @param CacheInterface|null $cache
-     */
     public function __construct(HttpClient $httpClient, CacheInterface $cache = null)
     {
         $this->httpClient = $httpClient;
-
         $this->cache = $cache;
     }
 
@@ -55,7 +37,7 @@ class CategoryProvider
      *
      * @return Category
      */
-    public function getItem($categoryId)
+    public function getItem(int $categoryId): ?Category
     {
         // Endpoint URI
         $uri = sprintf('v1/categories/%d', $categoryId);
@@ -72,14 +54,17 @@ class CategoryProvider
             if (!$data) {
                 $data = $this->httpClient->get($uri)->getBody()->getContents();
 
-                if ($this->cache and $data) {
+                if ($this->cache && $data) {
                     $this->cache->put($this->cachePrefix, $uri, [], $data);
                 }
             }
 
-            return CategoryHydrator::fromStdClass(json_decode($data));
+            return CategoryHydrator::fromStdClass(\json_decode($data));
         } catch (ClientException $e) {
             $response = $e->getResponse();
+            if ($response === null) {
+                throw $e;
+            }
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
@@ -95,9 +80,9 @@ class CategoryProvider
      *
      * @throws ApiException if the API call fails
      *
-     * @return array
+     * @return Category[]
      */
-    public function getItems($limit = 1000, $offset = 0)
+    public function getItems(int $limit = 1000, int $offset = 0): array
     {
         // Endpoint URI
         $uri = 'v1/categories';
@@ -123,22 +108,18 @@ class CategoryProvider
             if (!$data) {
                 $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
 
-                if ($this->cache and $data) {
+                if ($this->cache && $data) {
                     $this->cache->put($this->cachePrefix, $uri, $options, $data);
                 }
             }
 
-            $classArray = json_decode($data);
+            $classArray = \json_decode($data);
 
             foreach ($classArray as $class) {
                 $categories[] = CategoryHydrator::fromStdClass($class);
             }
         } catch (ClientException $e) {
-            $response = $e->getResponse();
-            $responseBody = $response->getBody()->getContents();
-            $responseCode = $response->getStatusCode();
-
-            throw ApiException::translate($responseBody, $responseCode);
+            $this->manageClientExceptionSimple($e);
         }
 
         return $categories;
@@ -153,9 +134,9 @@ class CategoryProvider
      *
      * @throws ApiException if the API call fails
      *
-     * @return array
+     * @return Category[]
      */
-    public function getItemsDataProvider($dataProviderId, $limit = 1000, $offset = 0)
+    public function getItemsDataProvider(int $dataProviderId, int $limit = 1000, int $offset = 0): array
     {
         // Endpoint URI
         $uri = sprintf('v1/dataproviders/%d/categories', $dataProviderId);
@@ -181,22 +162,18 @@ class CategoryProvider
             if (!$data) {
                 $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
 
-                if ($this->cache and $data) {
+                if ($this->cache && $data) {
                     $this->cache->put($this->cachePrefix, $uri, $options, $data);
                 }
             }
 
-            $classArray = json_decode($data);
+            $classArray = \json_decode($data);
 
             foreach ($classArray as $class) {
                 $categories[] = CategoryHydrator::fromStdClass($class);
             }
         } catch (ClientException $e) {
-            $response = $e->getResponse();
-            $responseBody = $response->getBody()->getContents();
-            $responseCode = $response->getStatusCode();
-
-            throw ApiException::translate($responseBody, $responseCode);
+            $this->manageClientExceptionSimple($e);
         }
 
         return $categories;
@@ -211,9 +188,9 @@ class CategoryProvider
      *
      * @throws ApiException if the API call fails
      *
-     * @return array
+     * @return Category[]
      */
-    public function getItemsDataConsumer($dataConsumerId, $limit = 1000, $offset = 0)
+    public function getItemsDataConsumer(int $dataConsumerId, int $limit = 1000, int $offset = 0): array
     {
         // Endpoint URI
         $uri = sprintf('v1/dataconsumers/%d/categories', $dataConsumerId);
@@ -239,22 +216,18 @@ class CategoryProvider
             if (!$data) {
                 $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
 
-                if ($this->cache and $data) {
+                if ($this->cache && $data) {
                     $this->cache->put($this->cachePrefix, $uri, $options, $data);
                 }
             }
 
-            $classArray = json_decode($data);
+            $classArray = \json_decode($data);
 
             foreach ($classArray as $class) {
                 $categories[] = CategoryHydrator::fromStdClass($class);
             }
         } catch (ClientException $e) {
-            $response = $e->getResponse();
-            $responseBody = $response->getBody()->getContents();
-            $responseCode = $response->getStatusCode();
-
-            throw ApiException::translate($responseBody, $responseCode);
+            $this->manageClientExceptionSimple($e);
         }
 
         return $categories;
@@ -270,7 +243,7 @@ class CategoryProvider
      *
      * @return Category
      */
-    public function create(Category $category)
+    public function create(Category $category): Category
     {
         // Endpoint URI
         $uri = 'v1/categories';
@@ -284,17 +257,15 @@ class CategoryProvider
 
             $category = CategoryHydrator::fromStdClass(json_decode($data));
 
-            if ($this->cache and $data) {
+            if ($this->cache && $data) {
                 $this->cache->invalidate($this->cachePrefix);
                 $this->cache->put($this->cachePrefix, $uri.'/'.$category->getId(), [], $data);
             }
-
-            return $category;
-
         } catch (ClientException $e) {
             $this->manageClientException($e);
         }
 
+        return $category;
     }
 
     /**
@@ -307,7 +278,7 @@ class CategoryProvider
      *
      * @return Category
      */
-    public function update(Category $category)
+    public function update(Category $category): Category
     {
         // Endpoint URI
         $uri = sprintf('v1/categories/%d', $category->getId());
@@ -321,15 +292,15 @@ class CategoryProvider
 
             $category = CategoryHydrator::fromStdClass(json_decode($data));
 
-            if ($this->cache and $data) {
+            if ($this->cache && $data) {
                 $this->cache->invalidate($this->cachePrefix);
                 $this->cache->put($this->cachePrefix, $uri.'/'.$category->getId(), [], $data);
             }
-
-            return $category;
         } catch (ClientException $e) {
             $this->manageClientException($e);
         }
+
+        return $category;
     }
 
     /**
@@ -341,7 +312,7 @@ class CategoryProvider
      *
      * @return bool
      */
-    public function delete(Category $category)
+    public function delete(Category $category): bool
     {
         // Endpoint URI
         $uri = sprintf('v1/categories/%d', $category->getId());
@@ -353,11 +324,7 @@ class CategoryProvider
                 $this->cache->invalidate($this->cachePrefix);
             }
         } catch (ClientException $e) {
-            $response = $e->getResponse();
-            $responseBody = $response->getBody()->getContents();
-            $responseCode = $response->getStatusCode();
-
-            throw ApiException::translate($responseBody, $responseCode);
+            $this->manageClientExceptionSimple($e);
         }
 
         return true;
@@ -369,7 +336,7 @@ class CategoryProvider
      * @throws EntityInvalidException
      * @throws ApiException
      */
-    protected function manageClientException(ClientException $exception)
+    protected function manageClientException(ClientException $exception): void
     {
         $response = $exception->getResponse();
 
@@ -380,7 +347,7 @@ class CategoryProvider
         $responseBody = $response->getBody()->getContents();
         $responseCode = $response->getStatusCode();
 
-        $error = json_decode($responseBody);
+        $error = \json_decode($responseBody);
 
         // Validation
         if (isset($error->modelState)) {
@@ -397,18 +364,35 @@ class CategoryProvider
                 }
 
                 foreach ($paramArr as $paramObj) {
-                    $errorMessages[] = isset($paramObj->message) ? $paramObj->message : $paramName;
+                    $errorMessages[] = $paramObj->message ?? $paramName;
                 }
             }
 
             throw EntityInvalidException::invalid(
                 $responseBody,
                 $responseCode,
-                \implode("\n", $errorMessages)
+                $errorMessages
             );
         }
 
         // Generic exception
+        throw ApiException::translate($responseBody, $responseCode);
+    }
+
+    /**
+     * @param ClientException $exception
+     *
+     * @throws ApiException
+     */
+    protected function manageClientExceptionSimple(ClientException $exception): void
+    {
+        $response = $exception->getResponse();
+        if ($response === null) {
+            throw $exception;
+        }
+        $responseBody = $response->getBody()->getContents();
+        $responseCode = $response->getStatusCode();
+
         throw ApiException::translate($responseBody, $responseCode);
     }
 }

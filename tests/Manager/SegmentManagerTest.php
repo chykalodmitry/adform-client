@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 namespace Audiens\AdForm\Tests\Provider;
 
@@ -7,11 +7,14 @@ use Audiens\AdForm\Entity\Category;
 use Audiens\AdForm\Entity\Segment;
 use Audiens\AdForm\Enum\SegmentStatus;
 use Audiens\AdForm\Exception\EntityInvalidException;
+use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\Uuid;
+use Audiens\AdForm\Exception\ApiException;
 
 /**
  * Class SegmentProviderTest
  */
-class SegmentProviderTest extends \PHPUnit_Framework_TestCase
+class SegmentManagerTest extends TestCase
 {
     /** @var Client */
     private $client;
@@ -31,23 +34,24 @@ class SegmentProviderTest extends \PHPUnit_Framework_TestCase
             try {
                 $this->client->segments()->delete($fixture);
             } catch (\Exception $e) {
-                echo "Segment delete error: ".$e->getMessage()."\n";
+                echo 'Segment delete error: ' .$e->getMessage()."\n";
             }
         }
+
         foreach ($this->categoryFixtures as $fixture) {
             try {
                 $this->client->categories()->delete($fixture);
             } catch (\Exception $e) {
-                echo "Category delete error: ".$e->getMessage()."\n";
+                echo 'Category delete error: ' .$e->getMessage()."\n";
             }
         }
 
     }
 
-    private function createCategoryFixture($addTearDown = true, $forceCreate = false)
+    private function createCategoryFixture($addTearDown = true): Category
     {
         $category = new Category();
-        $category->setName($this->getRandomName())
+        $category->setName(Uuid::uuid4()->toString())
             ->setDataProviderId(SANDBOX_DATA_PROVIDER_ID);
         $category = $this->client->categories()->create($category);
 
@@ -58,14 +62,9 @@ class SegmentProviderTest extends \PHPUnit_Framework_TestCase
         return $category;
     }
 
-    private function getRandomName()
+    private function createFixture($addTearDown = true): Segment
     {
-        return 'Test'.substr(uniqid('', true), 0, 10);
-    }
-
-    private function createFixture($addTearDown = true)
-    {
-        $name = $this->getRandomName();
+        $name = Uuid::uuid4()->toString();
 
         $category = $this->createCategoryFixture();
 
@@ -87,107 +86,75 @@ class SegmentProviderTest extends \PHPUnit_Framework_TestCase
         return $segment;
     }
 
-    /**
-     * @test
-     */
-    public function getItemWillReturnInstanceOfSegment()
+    public function test_getItemWillReturnInstanceOfSegment(): void
     {
         $segment = $this->createFixture();
 
         $segment = $this->client->segments()->getItem($segment->getId());
 
-        $this->assertInstanceOf(Segment::class, $segment);
+        TestCase::assertInstanceOf(Segment::class, $segment);
     }
 
-    /**
-     * @test
-     */
-    public function getItemsWillReturnArrayOfSegments()
+    public function test_getItemsWillReturnArrayOfSegments(): void
     {
         $segments = $this->client->segments()->getItems(1);
 
-        $this->assertInternalType('array', $segments);
+        TestCase::assertInternalType('array', $segments);
 
-        list($segment) = $segments;
+        [$segment] = $segments;
 
-        $this->assertInstanceOf(Segment::class, $segment);
+        TestCase::assertInstanceOf(Segment::class, $segment);
     }
 
-    /**
-     * @test
-     */
-    public function getItemsDataProviderWillReturnArrayOfSegments()
+    public function test_getItemsDataProviderWillReturnArrayOfSegments(): void
     {
         $segments = $this->client->segments()->getItemsDataProvider(SANDBOX_DATA_PROVIDER_ID, 1);
 
-        $this->assertInternalType('array', $segments);
+        TestCase::assertInternalType('array', $segments);
 
-        list($segment) = $segments;
+        [$segment] = $segments;
 
-        $this->assertInstanceOf(Segment::class, $segment);
+        TestCase::assertInstanceOf(Segment::class, $segment);
     }
 
 
-    /**
-     * @test
-     */
-    public function getItemsCategoryWillReturnAnArrayOfSegments()
+    public function test_getItemsCategoryWillReturnAnArrayOfSegments(): void
     {
         $segment = $this->createFixture();
-
         $segments = $this->client->segments()->getItemsCategory($segment->getCategoryId(), 2);
 
-        $this->assertInternalType('array', $segments);
-        $this->assertGreaterThanOrEqual(1, count($segments));
+        TestCase::assertInternalType('array', $segments);
+        TestCase::assertGreaterThanOrEqual(1, \count($segments));
 
-        list($segment) = $segments;
+        [$segmentCheck] = $segments;
 
-        $this->assertInstanceOf(Segment::class, $segment);
+        TestCase::assertInstanceOf(Segment::class, $segmentCheck);
     }
 
-    /**
-     * @test
-     */
-    public function createWillReturnInstanceOfSegment()
+    public function test_createWillThrowEntityInvalidException(): void
     {
-        $segment = $this->createFixture();
-
-        $this->assertInstanceOf(Segment::class, $segment);
-    }
-
-    /**
-     * @test
-     */
-    public function createWillThrowEntityInvalidException()
-    {
-        $this->setExpectedException(EntityInvalidException::class);
+        $this->expectException(EntityInvalidException::class);
 
         $segment = new Segment();
         $this->client->segments()->create($segment);
     }
 
-    /**
-     * @test
-     */
-    public function updateWillReturnInstanceOfSegment()
+    public function test_updateWillReturnInstanceOfSegment(): void
     {
         $segment = $this->createFixture();
 
-        $name = $this->getRandomName();
+        $name = Uuid::uuid4()->toString();
         $segment->setName($name);
 
         $segment = $this->client->segments()->update($segment);
 
-        $this->assertInstanceOf(Segment::class, $segment);
-        $this->assertEquals($segment->getName(), $name);
+        TestCase::assertInstanceOf(Segment::class, $segment);
+        TestCase::assertEquals($segment->getName(), $name);
     }
 
-    /**
-     * @test
-     */
-    public function updateWillThrowEntityInvalidException()
+    public function test_updateWillThrowEntityInvalidException(): void
     {
-        $this->setExpectedException(EntityInvalidException::class);
+        $this->expectException(EntityInvalidException::class);
 
         $segmentUnique = $this->createFixture();
         $segmentUpdate = $this->createFixture();
@@ -196,24 +163,21 @@ class SegmentProviderTest extends \PHPUnit_Framework_TestCase
         $this->client->segments()->update($segmentUpdate);
     }
 
-    /**
-     * @test
-     */
-    public function deleteWillReturnTrue()
+    public function test_deleteWillReturnTrue(): void
     {
         $segment = $this->createFixture(false);
 
         $status = $this->client->segments()->delete($segment);
 
-        $this->assertTrue($status);
+        TestCase::assertTrue($status);
     }
 
     /**
      * @test
      */
-    public function deleteWillThrowApiException()
+    public function test_deleteWillThrowApiException(): void
     {
-        $this->setExpectedException('Audiens\AdForm\Exception\ApiException');
+        $this->expectException(ApiException::class);
 
         $segment = new Segment();
 

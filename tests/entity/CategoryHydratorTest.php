@@ -1,16 +1,14 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 namespace Audiens\AdForm\Tests\Entity;
 
-/**
- * Class CategoryHydratorTest
- */
-class CategoryHydratorTest extends \PHPUnit_Framework_TestCase
+use Audiens\AdForm\Entity\Category;
+use Audiens\AdForm\Entity\CategoryHydrator;
+use PHPUnit\Framework\TestCase;
+
+class CategoryHydratorTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function hydratorWillReturnCategoryObject()
+    public function test_hydratorWillReturnCategoryObject(): void
     {
         $stdClass = new \stdClass();
         $stdClass->id = 10;
@@ -20,8 +18,7 @@ class CategoryHydratorTest extends \PHPUnit_Framework_TestCase
         $stdClass->createdAt = '2015-10-10';
         $stdClass->updatedAt = '2015-10-10';
 
-        $category = \Audiens\AdForm\Entity\CategoryHydrator::fromStdClass($stdClass);
-
-        $this->assertInstanceOf(\Audiens\AdForm\Entity\Category::class, $category);
+        $category = CategoryHydrator::fromStdClass($stdClass);
+        TestCase::assertInstanceOf(Category::class, $category);
     }
 }

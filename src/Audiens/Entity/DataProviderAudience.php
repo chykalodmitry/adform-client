@@ -1,99 +1,66 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Audiens\AdForm\Entity;
+
+use DateTime;
 
 /**
  * Class Category
  */
 class DataProviderAudience
 {
-    /**
-     * @var string
-     */
+    /** @var string|null */
     protected $dataProvider;
 
-    /**
-     * @var int
-     */
+    /** @var int|null */
     protected $dataProviderId;
 
-    /**
-     * @var int
-     */
+    /** @var int|null */
     protected $total;
 
-    /**
-     * @var int
-     */
+    /** @var int|null */
     protected $unique;
 
-    /**
-     * @var int
-     */
+    /** @var int|null */
     protected $totalHits;
 
-    /**
-     * @var int
-     */
+    /** @var int|null */
     protected $uniqueHits;
 
-    /**
-     * @var \DateTime
-     */
+    /** @var DateTime|null */
     protected $date;
 
-    /**
-     * @return string
-     */
-    public function getDataProvider()
+    public function getDataProvider(): ?string
     {
         return $this->dataProvider;
     }
 
-    /**
-     * @return int
-     */
-    public function getDataProviderId()
+    public function getDataProviderId(): ?int
     {
         return $this->dataProviderId;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotal()
+    public function getTotal(): ?int
     {
         return $this->total;
     }
 
-    /**
-     * @return int
-     */
-    public function getUnique()
+    public function getUnique(): ?int
     {
         return $this->unique;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalHits()
+    public function getTotalHits(): ?int
     {
         return $this->totalHits;
     }
 
-    /**
-     * @return int
-     */
-    public function getUniqueHits()
+    public function getUniqueHits(): ?int
     {
         return $this->uniqueHits;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getDate()
+    public function getDate(): ?DateTime
     {
         return $this->date;
     }

@@ -1,20 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Audiens\AdForm;
 
 use Audiens\AdForm\Cache\CacheInterface;
-use Audiens\AdForm\Provider\AgencyProvider;
-use Audiens\AdForm\Provider\AudienceProvider;
-use Audiens\AdForm\Provider\CategoryProvider;
-use Audiens\AdForm\Provider\SegmentProvider;
-use Audiens\AdForm\Provider\DataUsageProvider;
-use Audiens\AdForm\Provider\DataProviderAudienceProvider;
+use Audiens\AdForm\Manager\AgencyManager;
+use Audiens\AdForm\Manager\AudienceManager;
+use Audiens\AdForm\Manager\CategoryManager;
+use Audiens\AdForm\Manager\DataProviderAudienceManager;
+use Audiens\AdForm\Manager\DataUsageManager;
+use Audiens\AdForm\Manager\SegmentManager;
 
-/**
- * Class Adform
- *
- * @package Adform
- */
 class Client
 {
     /**
@@ -22,83 +17,68 @@ class Client
      *
      * @const string
      */
-    const VERSION = '0.2.1';
+    public const VERSION = '1.0.0';
 
     /**
      * URL for the AdForm API.
      *
      * @const string
      */
-    const BASE_URL = 'https://dmp-api.adform.com';
+    public const BASE_URL = 'https://dmp-api.adform.com';
 
-    /**
-     * @var Authentication
-     */
+    /** @var Authentication */
     protected $auth;
 
-    /**
-     * @var HttpClient
-     */
+    /** @var HttpClient */
     protected $httpClient;
 
-    /**
-     * @var CacheInterface
-     */
+    /** @var CacheInterface */
     protected $cache;
 
-    /**
-     * @var CategoryProvider
-     */
+    /** @var CategoryManager */
     protected $categories;
 
-    /**
-     * @var AudienceProvider
-     */
+    /** @var AudienceManager */
     protected $audiences;
 
-    /**
-     * @var SegmentProvider
-     */
+    /** @var SegmentManager */
     protected $segments;
 
-    /** @var  AgencyProvider */
+    /** @var  AgencyManager */
     protected $agencies;
 
     /**
-     * @var DataUsageProvider
+     * @var DataUsageManager
      */
     protected $dataUsage;
 
-    /**
-     * @var DPAudienceProvider
-     */
+    /** @var DataProviderAudienceManager */
     protected $dataProviderAudience;
 
     /**
      * Constructor.
      *
-     * @param string $username
-     * @param string $password
+     * @param string              $username
+     * @param string              $password
      * @param CacheInterface|null $cache
+     *
+     * @throws Exception\OauthException
      */
     public function __construct($username, $password, CacheInterface $cache = null)
     {
         $this->auth = new Authentication($username, $password);
-
         $this->httpClient = new HttpClient($this->auth);
-
         $this->cache = $cache;
     }
 
     /**
      * A proxy method for working with categories
-     *
-     * @return CategoryProvider
+     * @return CategoryManager
      */
-    public function categories()
+    public function categories(): CategoryManager
     {
-        if (is_null($this->categories)) {
-            $this->categories = new CategoryProvider($this->httpClient, $this->cache);
+        if ($this->categories === null) {
+            $this->categories = new CategoryManager($this->httpClient, $this->cache);
         }
 
         return $this->categories;
@@ -106,26 +86,24 @@ class Client
 
     /**
      * A proxy method for working with categories
-     *
-     * @return AudienceProvider
+     * @return AudienceManager
      */
-    public function audience()
+    public function audience(): AudienceManager
     {
-        if (is_null($this->audiences)) {
-            $this->audiences = new AudienceProvider($this->httpClient, $this->cache);
+        if ($this->audiences === null) {
+            $this->audiences = new AudienceManager($this->httpClient, $this->cache);
         }
         return $this->audiences;
     }
 
     /**
      * A proxy method for working with segments
-     *
-     * @return SegmentProvider
+     * @return SegmentManager
      */
-    public function segments()
+    public function segments(): SegmentManager
     {
-        if (is_null($this->segments)) {
-            $this->segments = new SegmentProvider($this->httpClient, $this->cache);
+        if ($this->segments === null) {
+            $this->segments = new SegmentManager($this->httpClient, $this->cache);
         }
 
         return $this->segments;
@@ -133,13 +111,12 @@ class Client
 
     /**
      * A proxy method for working with agencies
-     *
-     * @return AgencyProvider
+     * @return AgencyManager
      */
-    public function agencies()
+    public function agencies(): AgencyManager
     {
-        if (is_null($this->agencies)) {
-            $this->agencies = new AgencyProvider($this->httpClient, $this->cache);
+        if ($this->agencies === null) {
+            $this->agencies = new AgencyManager($this->httpClient, $this->cache);
         }
 
         return $this->agencies;
@@ -147,13 +124,12 @@ class Client
 
     /**
      * A proxy method for working with data usage reports
-     *
-     * @return DataUsageProvider
+     * @return DataUsageManager
      */
-    public function dataUsage()
+    public function dataUsage(): DataUsageManager
     {
-        if (is_null($this->dataUsage)) {
-            $this->dataUsage = new DataUsageProvider($this->httpClient, $this->cache);
+        if ($this->dataUsage === null) {
+            $this->dataUsage = new DataUsageManager($this->httpClient, $this->cache);
         }
 
         return $this->dataUsage;
@@ -161,13 +137,12 @@ class Client
 
     /**
      * A proxy method for working with data provider audience reports
-     *
-     * @return DataProviderAudienceProvider
+     * @return DataProviderAudienceManager
      */
-    public function dataProviderAudience()
+    public function dataProviderAudience(): DataProviderAudienceManager
     {
-        if (is_null($this->dataProviderAudience)) {
-            $this->dataProviderAudience = new DataProviderAudienceProvider($this->httpClient, $this->cache);
+        if ($this->dataProviderAudience === null) {
+            $this->dataProviderAudience = new DataProviderAudienceManager($this->httpClient, $this->cache);
         }
 
         return $this->dataProviderAudience;

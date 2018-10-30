@@ -1,116 +1,82 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Audiens\AdForm\Entity;
 
 use JsonSerializable;
+use stdClass;
 
 /**
  * Class Agency
  */
 class Agency implements JsonSerializable
 {
-    /**
-     * @var string
-     */
+    /** @var string|null */
     protected $id;
 
-    /**
-     * @var string
-     */
+    /** @var string|null */
     protected $name;
 
-    /**
-     * @var int
-     */
+    /** @var int|null */
     protected $countryId;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $active;
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     */
-    public function setId($id)
+    public function setId($id): void
     {
         $this->id = $id;
     }
 
-
-
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return int
-     */
-    public function getCountryId()
+    public function getCountryId(): ?int
     {
         return $this->countryId;
     }
 
-    /**
-     * @param int $countryId
-     */
-    public function setCountryId($countryId)
+    public function setCountryId(int $countryId): void
     {
         $this->countryId = $countryId;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isActive()
+    public function isActive(): ?bool
     {
         return $this->active;
     }
 
-    /**
-     * @param boolean $active
-     */
-    public function setActive($active)
+    public function setActive(bool $active): void
     {
         $this->active = $active;
     }
 
-    function jsonSerialize()
+    public function jsonSerialize()
     {
-        $json = new \stdClass();
+        $json = new stdClass();
 
         // might not be set for a new Agency
-        if (!is_null($this->id)) {
+        if ($this->id !== null) {
             $json->id = $this->id;
         }
 
         $json->name = $this->name;
 
         // might not be set at all
-        if (!is_null($this->countryId)) {
+        if ($this->countryId !== null) {
             $json->countryId = $this->countryId;
         }
-
 
         $json->active = $this->active;
 

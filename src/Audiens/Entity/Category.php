@@ -1,7 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Audiens\AdForm\Entity;
 
+use DateTime;
 use JsonSerializable;
 
 /**
@@ -9,129 +10,81 @@ use JsonSerializable;
  */
 class Category implements JsonSerializable
 {
-    /**
-     * @var int
-     */
+    /** @var int|null */
     protected $id;
 
-    /**
-     * @var string
-     */
+    /** @var string|null */
     protected $name;
 
-    /**
-     * @var int
-     */
+    /** @var int|null */
     protected $dataProviderId;
 
-    /**
-     * @var int
-     */
+    /** @var int|null */
     protected $parentId;
 
-    /**
-     * @var \DateTime
-     */
+    /** @var DateTime|null */
     protected $updatedAt;
 
-    /**
-     * @var \DateTime
-     */
+    /** @var DateTime|null */
     protected $createdAt;
 
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
+    public function getUpdatedAt(): ?DateTime
     {
         return $this->updatedAt;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
+    public function getCreatedAt(): ?DateTime
     {
         return $this->createdAt;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return Category
-     */
-    public function setName($name)
+    public function setName(string $name): Category
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getDataProviderId()
+    public function getDataProviderId(): ?int
     {
         return $this->dataProviderId;
     }
 
-    /**
-     * @param int $dataProviderId
-     *
-     * @return Category
-     */
-    public function setDataProviderId($dataProviderId)
+    public function setDataProviderId(int $dataProviderId): Category
     {
         $this->dataProviderId = $dataProviderId;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getParentId()
+    public function getParentId(): ?int
     {
         return $this->parentId;
     }
 
-    /**
-     * @param int $parentId
-     *
-     * @return Category
-     */
-    public function setParentId($parentId)
+    public function setParentId(int $parentId): Category
     {
         $this->parentId = $parentId;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function jsonSerialize()
     {
         $json = new \stdClass();
 
         // might not be set for a new category
-        if (!is_null($this->id)) {
+        if ($this->id !== null) {
             $json->id = $this->id;
         }
 
@@ -139,17 +92,17 @@ class Category implements JsonSerializable
         $json->dataProviderId = $this->dataProviderId;
 
         // might not be set at all
-        if (!is_null($this->parentId)) {
+        if ($this->parentId !== null) {
             $json->parentId = $this->parentId;
         }
 
         // might not be set for a new category
-        if (!is_null($this->createdAt)) {
+        if ($this->createdAt !== null) {
             $json->createdAt = $this->createdAt->format('c');
         }
 
         // might not be set for a new category
-        if (!is_null($this->updatedAt)) {
+        if ($this->updatedAt !== null) {
             $json->updatedAt = $this->updatedAt->format('c');
         }
 

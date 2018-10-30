@@ -1,6 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace Audiens\AdForm\Provider;
+namespace Audiens\AdForm\Manager;
 
 use Audiens\AdForm\Cache\CacheInterface;
 use Audiens\AdForm\Entity\Audience;
@@ -8,40 +8,22 @@ use Audiens\AdForm\Entity\AudienceHydrator;
 use Audiens\AdForm\Exception\EntityNotFoundException;
 use Audiens\AdForm\HttpClient;
 use GuzzleHttp\Exception\ClientException;
+use RuntimeException;
 
-
-/**
- * Class Adform
- *
- * @package Adform
- */
-class AudienceProvider
+class AudienceManager
 {
-    /**
-     * @var HttpClient
-     */
+    /** @var HttpClient */
     protected $httpClient;
 
-    /**
-     * @var CacheInterface
-     */
+    /** @var CacheInterface */
     protected $cache;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $cachePrefix = 'audience';
 
-    /**
-     * Constructor.
-     *
-     * @param HttpClient $httpClient
-     * @param CacheInterface|null $cache
-     */
     public function __construct(HttpClient $httpClient, CacheInterface $cache = null)
     {
         $this->httpClient = $httpClient;
-
         $this->cache = $cache;
     }
 
@@ -49,10 +31,11 @@ class AudienceProvider
      * Return an array of Audience based on segment ID
      *
      * @param $segmentId
-     * @return array|Audience[]
+     * @return Audience[]
      * @throws EntityNotFoundException
+     * @throw RuntimeException if response is null
      */
-    public function getItem($segmentId)
+    public function getItem($segmentId): ?array
     {
         // Endpoint URI
         $uri = sprintf('v2/segments/%s/audience/totals', $segmentId);
@@ -69,16 +52,16 @@ class AudienceProvider
             if (!$data) {
                 $data = $this->httpClient->get($uri)->getBody()->getContents();
 
-                if ($this->cache and $data) {
+                if ($this->cache && $data) {
                     $this->cache->put($this->cachePrefix, $uri, [], $data);
                 }
             }
 
-            $dataDecoded = json_decode($data);
+            $dataDecoded = \json_decode($data);
 
             $audiences = [];
 
-            if (is_array($dataDecoded) && count($dataDecoded) > 0) {
+            if (\is_array($dataDecoded) && \count($dataDecoded) > 0) {
                 foreach ($dataDecoded as $item) {
                     $audiences[] = AudienceHydrator::fromStdClass($item);
                 }
@@ -88,6 +71,9 @@ class AudienceProvider
 
         } catch (ClientException $e) {
             $response = $e->getResponse();
+            if ($response === null) {
+                throw new RuntimeException('Null response');
+            }
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 

@@ -1,13 +1,12 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 namespace Audiens\AdForm\Tests\Provider;
 
 use Audiens\AdForm\Client;
+use DateTime;
+use PHPUnit\Framework\TestCase;
 
-/**
- * Class DataUsageProviderTest
- */
-class DataUsageProviderTest extends \PHPUnit_Framework_TestCase
+class DataUsageManagerTest extends TestCase
 {
     /** @var Client */
     private $client;
@@ -17,16 +16,13 @@ class DataUsageProviderTest extends \PHPUnit_Framework_TestCase
         $this->client = new Client(SANDBOX_USERNAME, SANDBOX_PASSWORD);
     }
 
-    /**
-     * @test
-     */
-    public function geItemsWillReturnArray()
+    public function test_geItemsWillReturnArray(): void
     {
-        $from = new \DateTime('yesterday');
-        $to = new \DateTime('today');
+        $from = new DateTime('yesterday');
+        $to = new DateTime('today');
         $groupBy = ['segment'];
         $dataUsage = $this->client->dataUsage()->get(SANDBOX_DATA_PROVIDER_ID, $from, $to, $groupBy);
 
-        $this->assertInternalType('array', $dataUsage);
+        TestCase::assertInternalType('array', $dataUsage);
     }
 }

@@ -1,44 +1,27 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace Audiens\AdForm\Provider;
+namespace Audiens\AdForm\Manager;
 
-use Audiens\AdForm\HttpClient;
-use Audiens\AdForm\Exception;
 use Audiens\AdForm\Cache\CacheInterface;
+use Audiens\AdForm\Exception\ApiException;
+use Audiens\AdForm\HttpClient;
+use DateTime;
 use GuzzleHttp\Exception\ClientException;
 
-/**
- * Class RevenueProvider
- *
- * @package Adform
- */
-class DataUsageProvider
+class DataUsageManager
 {
-    /**
-     * @var HttpClient
-     */
+    /** @var HttpClient */
     protected $httpClient;
 
-    /**
-     * @var CacheInterface
-     */
+    /** @var CacheInterface */
     protected $cache;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $cachePrefix = 'datausage';
 
-    /**
-     * Constructor.
-     *
-     * @param HttpClient $httpClient
-     * @param CacheInterface|null $cache
-     */
     public function __construct(HttpClient $httpClient, CacheInterface $cache = null)
     {
         $this->httpClient = $httpClient;
-
         $this->cache = $cache;
     }
 
@@ -46,17 +29,17 @@ class DataUsageProvider
      * Returns an array of data usage objects
      *
      * @param int $dataProviderId
-     * @param |DateTime $from
-     * @param |DateTime $to
+     * @param DateTime $from
+     * @param DateTime $to
      * @param array $groupBy
      * @param int $limit
      * @param int $offset
      *
-     * @throws Exception\ApiException if the API call fails
+     * @throws ApiException if the API call fails
      *
      * @return array
      */
-    public function get($dataProviderId, $from, $to, $groupBy, $limit = 1000, $offset = 0)
+    public function get(int $dataProviderId, DateTime $from, DateTime $to, array $groupBy, int $limit = 1000, int $offset = 0): array
     {
         // Endpoint URI
         $uri = 'v1/reports/datausage';
@@ -72,8 +55,6 @@ class DataUsageProvider
             ],
         ];
 
-        $usage = [];
-
         try {
             $data = null;
 
@@ -86,20 +67,22 @@ class DataUsageProvider
             if (!$data) {
                 $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
 
-                if ($this->cache and $data) {
+                if ($this->cache && $data) {
                     $this->cache->put($this->cachePrefix, $uri, $options, $data);
                 }
             }
 
-            $usage = json_decode($data);
+            return \json_decode($data);
         } catch (ClientException $e) {
             $response = $e->getResponse();
+            if ($response === null) {
+                throw $e;
+            }
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
-            throw new Exception\ApiException($responseBody, $responseCode);
+            throw new ApiException($responseBody, $responseCode);
         }
 
-        return $usage;
     }
 }

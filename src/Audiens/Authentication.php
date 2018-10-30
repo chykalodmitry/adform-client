@@ -1,30 +1,22 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Audiens\AdForm;
 
 use Audiens\AdForm\Exception\OauthException;
-use \League\OAuth2\Client\Provider\GenericProvider;
-use \League\OAuth2\Client\Provider\Exception\IdentityProviderException;
+use DateTime;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
+use League\OAuth2\Client\Provider\GenericProvider;
 use League\OAuth2\Client\Token\AccessToken;
 
-/**
- * Class Autentication
- */
 class Authentication
 {
-    /**
-     * @var AccessToken
-     */
+    /** @var AccessToken */
     protected $accessToken;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $username;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $password;
 
     /**
@@ -35,7 +27,7 @@ class Authentication
      *
      * @throws OauthException
      */
-    public function __construct($username, $password)
+    public function __construct(string $username, string $password)
     {
         $this->username = $username;
         $this->password = $password;
@@ -48,7 +40,7 @@ class Authentication
      *
      * @throws OauthException if authentication fails
      */
-    public function authenticate()
+    public function authenticate(): void
     {
         $urlAccessToken = Client::BASE_URL.'/v1/token';
 
@@ -74,16 +66,16 @@ class Authentication
     }
 
     /**
-     * Returns the Access Token, or try to reauthenticate if needed
+     * Returns the Access Token, or try to re-authenticate if needed
      *
      * @return string
      *
      * @throws OauthException
      */
-    public function getAccessToken()
+    public function getAccessToken(): string
     {
         // maybe the token will expire in next 10 seconds
-        $expiryCutoff = new \DateTime('+10 seconds');
+        $expiryCutoff = new DateTime('+10 seconds');
 
         // if the token expires try to re-authenticate
         if (!$this->accessToken || $this->getExpires() < $expiryCutoff->getTimestamp()) {
@@ -98,7 +90,7 @@ class Authentication
      *
      * @return int
      */
-    public function getExpires()
+    public function getExpires(): int
     {
         return $this->accessToken->getExpires();
     }

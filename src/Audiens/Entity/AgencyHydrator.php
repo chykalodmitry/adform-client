@@ -1,22 +1,20 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Audiens\AdForm\Entity;
 
-/**
- * Class AgencyHydrator
- */
+use stdClass;
+
 class AgencyHydrator extends Agency
 {
-
     /**
      * Hydrate an agency from a stdClass, intended to be used for
-     * instancing a category from json_decode()
+     * instancing a category from \json_decode()
      *
-     * @param \stdClass $stdClass
+     * @param stdClass $stdClass
      *
      * @return Agency
      */
-    public static function fromStdClass(\stdClass $stdClass)
+    public static function fromStdClass(stdClass $stdClass): Agency
     {
         $agency = new Agency();
 
@@ -27,5 +25,4 @@ class AgencyHydrator extends Agency
 
         return $agency;
     }
-
 }

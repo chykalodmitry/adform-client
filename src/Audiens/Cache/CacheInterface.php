@@ -1,44 +1,21 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Audiens\AdForm\Cache;
 
-/**
- * Interface CacheInterface
- */
 interface CacheInterface
 {
-    /**
-     * @param $providerPrefix
-     * @param $uri
-     * @param $query
-     * @param $data
-     *
-     * @return bool
-     */
-    public function put($providerPrefix, $uri, $query, $data);
+    public function put(string $providerPrefix, string $uri, array $query, string $data): bool;
 
     /**
-     * @param $providerPrefix
-     * @param $uri
-     * @param $query
+     * @param string $providerPrefix
+     * @param string $uri
+     * @param array  $query
      *
      * @return bool|mixed
      */
-    public function get($providerPrefix, $uri, $query);
+    public function get(string $providerPrefix, string $uri, array $query);
 
-    /**
-     * @param $providerPrefix
-     * @param $uri
-     * @param $query
-     *
-     * @return bool
-     */
-    public function delete($providerPrefix, $uri, $query);
+    public function delete(string $providerPrefix, string $uri, array $query): bool;
 
-    /**
-     * @param $providerPrefix
-     *
-     * @return bool
-     */
-    public function invalidate($providerPrefix);
+    public function invalidate(string $providerPrefix): bool;
 }
