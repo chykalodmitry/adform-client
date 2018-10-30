@@ -2,18 +2,22 @@
 
 namespace Audiens\AdForm\Tests\Provider;
 
+use Audiens\AdForm\Cache\CacheInterface;
 use Audiens\AdForm\Client;
 use Audiens\AdForm\Entity\Category;
 use Audiens\AdForm\Entity\Segment;
 use Audiens\AdForm\Enum\SegmentStatus;
 use Audiens\AdForm\Exception\EntityInvalidException;
+use Audiens\AdForm\HttpClient;
+use Audiens\AdForm\Manager\SegmentManager;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 use Ramsey\Uuid\Uuid;
 use Audiens\AdForm\Exception\ApiException;
 
-/**
- * Class SegmentProviderTest
- */
 class SegmentManagerTest extends TestCase
 {
     /** @var Client */
@@ -86,6 +90,73 @@ class SegmentManagerTest extends TestCase
         return $segment;
     }
 
+    /**
+     * @group unit
+     */
+    public function test_getItemWillReturnACachedSegment(): void
+    {
+        $originalSegment = $this->createFixture();
+
+        /** @var CacheInterface|ObjectProphecy $cache */
+        $cache = $this->prophesize(CacheInterface::class);
+        $cache
+            ->get('segment', 'v1/segments/'.$originalSegment->getId(), Argument::any())
+            ->willReturn(\json_encode($originalSegment))->shouldBeCalledTimes(1);
+
+        /** @var HttpClient|ObjectProphecy $httpClient */
+        $httpClient = $this->prophesize(HttpClient::class);
+
+        $segmentManager = new SegmentManager($httpClient->reveal(), $cache->reveal());
+        $foundSegment = $segmentManager->getItem($originalSegment->getId());
+
+        TestCase::assertJsonStringEqualsJsonString(
+            \json_encode($originalSegment),
+            \json_encode($foundSegment)
+        );
+    }
+
+    /**
+     * @group unit
+     */
+    public function test_getItemWillPutTheSegmentIntoTheCache(): void
+    {
+        $originalSegment = $this->createFixture();
+        $encodedOriginalSegment = \json_encode($originalSegment);
+
+        $uri = 'v1/segments/'.$originalSegment->getId();
+
+        /** @var CacheInterface|ObjectProphecy $cache */
+        $cache = $this->prophesize(CacheInterface::class);
+        $cache
+            ->get('segment', $uri, Argument::any())
+            ->willReturn(null)->shouldBeCalledTimes(1);
+        $cache
+            ->put('segment', $uri, Argument::any(), $encodedOriginalSegment)
+            ->shouldBeCalledTimes(1);
+
+        /** @var StreamInterface|ObjectProphecy $responseBody */
+        $responseBody = $this->prophesize(StreamInterface::class);
+        $responseBody->getContents()->willReturn($encodedOriginalSegment);
+        /** @var ResponseInterface|ObjectProphecy $response */
+        $response = $this->prophesize(ResponseInterface::class);
+        $response->getBody()->willReturn($responseBody);
+
+        /** @var HttpClient|ObjectProphecy $httpClient */
+        $httpClient = $this->prophesize(HttpClient::class);
+        $httpClient
+            ->get($uri)
+            ->willReturn($response)
+            ->shouldBeCalledTimes(1);
+
+        $segmentManager = new SegmentManager($httpClient->reveal(), $cache->reveal());
+        $foundSegment = $segmentManager->getItem($originalSegment->getId());
+
+        TestCase::assertJsonStringEqualsJsonString(
+            $encodedOriginalSegment,
+            \json_encode($foundSegment)
+        );
+    }
+
     public function test_getItemWillReturnInstanceOfSegment(): void
     {
         $segment = $this->createFixture();
@@ -106,6 +177,73 @@ class SegmentManagerTest extends TestCase
         TestCase::assertInstanceOf(Segment::class, $segment);
     }
 
+    /**
+     * @group unit
+     */
+    public function test_getItemsWillReturnACachedResponse(): void
+    {
+        $originalSegment = $this->createFixture();
+
+        /** @var CacheInterface|ObjectProphecy $cache */
+        $cache = $this->prophesize(CacheInterface::class);
+        $cache
+            ->get('segment', 'v1/segments', Argument::any())
+            ->willReturn(\json_encode([$originalSegment]))->shouldBeCalledTimes(1);
+
+        /** @var HttpClient|ObjectProphecy $httpClient */
+        $httpClient = $this->prophesize(HttpClient::class);
+
+        $segmentManager = new SegmentManager($httpClient->reveal(), $cache->reveal());
+        $foundSegments = $segmentManager->getItems();
+
+        TestCase::assertJsonStringEqualsJsonString(
+            \json_encode([$originalSegment]),
+            \json_encode($foundSegments)
+        );
+    }
+
+    /**
+     * @group unit
+     */
+    public function test_getItemsWillPutTheSegmentsIntoTheCache(): void
+    {
+        $originalSegment = $this->createFixture();
+        $encodedOriginalSegment = \json_encode([$originalSegment]);
+
+        $uri = 'v1/segments';
+
+        /** @var CacheInterface|ObjectProphecy $cache */
+        $cache = $this->prophesize(CacheInterface::class);
+        $cache
+            ->get('segment', $uri, Argument::any())
+            ->willReturn(null)->shouldBeCalledTimes(1);
+        $cache
+            ->put('segment', $uri, Argument::any(), $encodedOriginalSegment)
+            ->shouldBeCalledTimes(1);
+
+        /** @var StreamInterface|ObjectProphecy $responseBody */
+        $responseBody = $this->prophesize(StreamInterface::class);
+        $responseBody->getContents()->willReturn($encodedOriginalSegment);
+        /** @var ResponseInterface|ObjectProphecy $response */
+        $response = $this->prophesize(ResponseInterface::class);
+        $response->getBody()->willReturn($responseBody);
+
+        /** @var HttpClient|ObjectProphecy $httpClient */
+        $httpClient = $this->prophesize(HttpClient::class);
+        $httpClient
+            ->get($uri, Argument::any())
+            ->willReturn($response)
+            ->shouldBeCalledTimes(1);
+
+        $segmentManager = new SegmentManager($httpClient->reveal(), $cache->reveal());
+        $foundSegments = $segmentManager->getItems();
+
+        TestCase::assertJsonStringEqualsJsonString(
+            $encodedOriginalSegment,
+            \json_encode($foundSegments)
+        );
+    }
+
     public function test_getItemsDataProviderWillReturnArrayOfSegments(): void
     {
         $segments = $this->client->segments()->getItemsDataProvider(SANDBOX_DATA_PROVIDER_ID, 1);
@@ -115,6 +253,219 @@ class SegmentManagerTest extends TestCase
         [$segment] = $segments;
 
         TestCase::assertInstanceOf(Segment::class, $segment);
+    }
+
+    /**
+     * @group unit
+     */
+    public function test_getItemsDataProviderWillReturnACachedResponse(): void
+    {
+        $dataProviderId = 42;
+        $uri = "v1/dataproviders/$dataProviderId/segments";
+
+        $originalSegment = $this->createFixture();
+
+        /** @var CacheInterface|ObjectProphecy $cache */
+        $cache = $this->prophesize(CacheInterface::class);
+        $cache
+            ->get('segment', $uri, Argument::any())
+            ->willReturn(\json_encode([$originalSegment]))->shouldBeCalledTimes(1);
+
+        /** @var HttpClient|ObjectProphecy $httpClient */
+        $httpClient = $this->prophesize(HttpClient::class);
+
+        $segmentManager = new SegmentManager($httpClient->reveal(), $cache->reveal());
+        $foundSegments = $segmentManager->getItemsDataProvider($dataProviderId);
+
+        TestCase::assertJsonStringEqualsJsonString(
+            \json_encode([$originalSegment]),
+            \json_encode($foundSegments)
+        );
+    }
+
+    /**
+     * @group unit
+     */
+    public function test_getItemsDataProviderWillPutTheSegmentsIntoTheCache(): void
+    {
+        $originalSegment = $this->createFixture();
+        $encodedOriginalSegment = \json_encode([$originalSegment]);
+
+        $dataProviderId = 42;
+        $uri = "v1/dataproviders/$dataProviderId/segments";
+
+        /** @var CacheInterface|ObjectProphecy $cache */
+        $cache = $this->prophesize(CacheInterface::class);
+        $cache
+            ->get('segment', $uri, Argument::any())
+            ->willReturn(null)->shouldBeCalledTimes(1);
+        $cache
+            ->put('segment', $uri, Argument::any(), $encodedOriginalSegment)
+            ->shouldBeCalledTimes(1);
+
+        /** @var StreamInterface|ObjectProphecy $responseBody */
+        $responseBody = $this->prophesize(StreamInterface::class);
+        $responseBody->getContents()->willReturn($encodedOriginalSegment);
+        /** @var ResponseInterface|ObjectProphecy $response */
+        $response = $this->prophesize(ResponseInterface::class);
+        $response->getBody()->willReturn($responseBody);
+
+        /** @var HttpClient|ObjectProphecy $httpClient */
+        $httpClient = $this->prophesize(HttpClient::class);
+        $httpClient
+            ->get($uri, Argument::any())
+            ->willReturn($response)
+            ->shouldBeCalledTimes(1);
+
+        $segmentManager = new SegmentManager($httpClient->reveal(), $cache->reveal());
+        $foundSegments = $segmentManager->getItemsDataProvider($dataProviderId);
+
+        TestCase::assertJsonStringEqualsJsonString(
+            $encodedOriginalSegment,
+            \json_encode($foundSegments)
+        );
+    }
+
+    /**
+     * @group unit
+     */
+    public function test_getItemsCategoryWillReturnACachedResponse(): void
+    {
+        $categoryId = 42;
+        $uri = "v1/categories/$categoryId/segments";
+
+        $originalSegment = $this->createFixture();
+
+        /** @var CacheInterface|ObjectProphecy $cache */
+        $cache = $this->prophesize(CacheInterface::class);
+        $cache
+            ->get('segment', $uri, Argument::any())
+            ->willReturn(\json_encode([$originalSegment]))->shouldBeCalledTimes(1);
+
+        /** @var HttpClient|ObjectProphecy $httpClient */
+        $httpClient = $this->prophesize(HttpClient::class);
+
+        $segmentManager = new SegmentManager($httpClient->reveal(), $cache->reveal());
+        $foundSegments = $segmentManager->getItemsCategory($categoryId);
+
+        TestCase::assertJsonStringEqualsJsonString(
+            \json_encode([$originalSegment]),
+            \json_encode($foundSegments)
+        );
+    }
+
+    /**
+     * @group unit
+     */
+    public function test_getItemsCategoryWillPutTheSegmentsIntoTheCache(): void
+    {
+        $originalSegment = $this->createFixture();
+        $encodedOriginalSegment = \json_encode([$originalSegment]);
+
+        $categoryId = 42;
+        $uri = "v1/categories/$categoryId/segments";
+
+        /** @var CacheInterface|ObjectProphecy $cache */
+        $cache = $this->prophesize(CacheInterface::class);
+        $cache
+            ->get('segment', $uri, Argument::any())
+            ->willReturn(null)->shouldBeCalledTimes(1);
+        $cache
+            ->put('segment', $uri, Argument::any(), $encodedOriginalSegment)
+            ->shouldBeCalledTimes(1);
+
+        /** @var StreamInterface|ObjectProphecy $responseBody */
+        $responseBody = $this->prophesize(StreamInterface::class);
+        $responseBody->getContents()->willReturn($encodedOriginalSegment);
+        /** @var ResponseInterface|ObjectProphecy $response */
+        $response = $this->prophesize(ResponseInterface::class);
+        $response->getBody()->willReturn($responseBody);
+
+        /** @var HttpClient|ObjectProphecy $httpClient */
+        $httpClient = $this->prophesize(HttpClient::class);
+        $httpClient
+            ->get($uri, Argument::any())
+            ->willReturn($response)
+            ->shouldBeCalledTimes(1);
+
+        $segmentManager = new SegmentManager($httpClient->reveal(), $cache->reveal());
+        $foundSegments = $segmentManager->getItemsCategory($categoryId);
+
+        TestCase::assertJsonStringEqualsJsonString(
+            $encodedOriginalSegment,
+            \json_encode($foundSegments)
+        );
+    }
+
+    /**
+     * @group unit
+     */
+    public function test_getItemsDataConsumerWillReturnACachedResponse(): void
+    {
+        $dataConsumerId = 42;
+        $uri = "v1/dataconsumers/$dataConsumerId/segments";
+
+        $originalSegment = $this->createFixture();
+
+        /** @var CacheInterface|ObjectProphecy $cache */
+        $cache = $this->prophesize(CacheInterface::class);
+        $cache
+            ->get('segment', $uri, Argument::any())
+            ->willReturn(\json_encode([$originalSegment]))->shouldBeCalledTimes(1);
+
+        /** @var HttpClient|ObjectProphecy $httpClient */
+        $httpClient = $this->prophesize(HttpClient::class);
+
+        $segmentManager = new SegmentManager($httpClient->reveal(), $cache->reveal());
+        $foundSegments = $segmentManager->getItemsDataConsumer($dataConsumerId);
+
+        TestCase::assertJsonStringEqualsJsonString(
+            \json_encode([$originalSegment]),
+            \json_encode($foundSegments)
+        );
+    }
+
+    /**
+     * @group unit
+     */
+    public function test_getItemsDataConsumerWillPutTheSegmentsIntoTheCache(): void
+    {
+        $originalSegment = $this->createFixture();
+        $encodedOriginalSegment = \json_encode([$originalSegment]);
+
+        $dataConsumerId = 42;
+        $uri = "v1/dataconsumers/$dataConsumerId/segments";
+
+        /** @var CacheInterface|ObjectProphecy $cache */
+        $cache = $this->prophesize(CacheInterface::class);
+        $cache
+            ->get('segment', $uri, Argument::any())
+            ->willReturn(null)->shouldBeCalledTimes(1);
+        $cache
+            ->put('segment', $uri, Argument::any(), $encodedOriginalSegment)
+            ->shouldBeCalledTimes(1);
+
+        /** @var StreamInterface|ObjectProphecy $responseBody */
+        $responseBody = $this->prophesize(StreamInterface::class);
+        $responseBody->getContents()->willReturn($encodedOriginalSegment);
+        /** @var ResponseInterface|ObjectProphecy $response */
+        $response = $this->prophesize(ResponseInterface::class);
+        $response->getBody()->willReturn($responseBody);
+
+        /** @var HttpClient|ObjectProphecy $httpClient */
+        $httpClient = $this->prophesize(HttpClient::class);
+        $httpClient
+            ->get($uri, Argument::any())
+            ->willReturn($response)
+            ->shouldBeCalledTimes(1);
+
+        $segmentManager = new SegmentManager($httpClient->reveal(), $cache->reveal());
+        $foundSegments = $segmentManager->getItemsDataConsumer($dataConsumerId);
+
+        TestCase::assertJsonStringEqualsJsonString(
+            $encodedOriginalSegment,
+            \json_encode($foundSegments)
+        );
     }
 
 

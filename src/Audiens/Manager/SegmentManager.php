@@ -94,42 +94,7 @@ class SegmentManager
             ],
         ];
 
-        $segments = [];
-
-        try {
-            $data = null;
-
-            // try to get from cache
-            if ($this->cache) {
-                $data = $this->cache->get($this->cachePrefix, $uri, $options);
-            }
-
-            // load from API
-            if (!$data) {
-                $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
-
-                if ($this->cache && $data) {
-                    $this->cache->put($this->cachePrefix, $uri, $options, $data);
-                }
-            }
-
-            $classArray = \json_decode($data);
-
-            foreach ($classArray as $class) {
-                $segments[] = SegmentHydrator::fromStdClass($class);
-            }
-        } catch (ClientException $e) {
-            $response = $e->getResponse();
-            if ($response === null) {
-                throw $e;
-            }
-            $responseBody = $response->getBody()->getContents();
-            $responseCode = $response->getStatusCode();
-
-            throw ApiException::translate($responseBody, $responseCode);
-        }
-
-        return $segments;
+        return $this->getSegmentsFromListEndpoint($uri, $options);
     }
 
     /**
@@ -155,42 +120,7 @@ class SegmentManager
             ],
         ];
 
-        $segments = [];
-
-        try {
-            $data = null;
-
-            // try to get from cache
-            if ($this->cache) {
-                $data = $this->cache->get($this->cachePrefix, $uri, $options);
-            }
-
-            // load from API
-            if (!$data) {
-                $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
-
-                if ($this->cache && $data) {
-                    $this->cache->put($this->cachePrefix, $uri, $options, $data);
-                }
-            }
-
-            $classArray = \json_decode($data);
-
-            foreach ($classArray as $class) {
-                $segments[] = SegmentHydrator::fromStdClass($class);
-            }
-        } catch (ClientException $e) {
-            $response = $e->getResponse();
-            if ($response === null) {
-                throw $e;
-            }
-            $responseBody = $response->getBody()->getContents();
-            $responseCode = $response->getStatusCode();
-
-            throw ApiException::translate($responseBody, $responseCode);
-        }
-
-        return $segments;
+        return $this->getSegmentsFromListEndpoint($uri, $options);
     }
 
     /**
@@ -216,42 +146,7 @@ class SegmentManager
             ],
         ];
 
-        $segments = [];
-
-        try {
-            $data = null;
-
-            // try to get from cache
-            if ($this->cache) {
-                $data = $this->cache->get($this->cachePrefix, $uri, $options);
-            }
-
-            // load from API
-            if (!$data) {
-                $data = $this->httpClient->get($uri, $options)->getBody()->getContents();
-
-                if ($this->cache && $data) {
-                    $this->cache->put($this->cachePrefix, $uri, $options, $data);
-                }
-            }
-
-            $classArray = \json_decode($data);
-
-            foreach ($classArray as $class) {
-                $segments[] = SegmentHydrator::fromStdClass($class);
-            }
-        } catch (ClientException $e) {
-            $response = $e->getResponse();
-            if ($response === null) {
-                throw $e;
-            }
-            $responseBody = $response->getBody()->getContents();
-            $responseCode = $response->getStatusCode();
-
-            throw ApiException::translate($responseBody, $responseCode);
-        }
-
-        return $segments;
+        return $this->getSegmentsFromListEndpoint($uri, $options);
     }
 
     /**
@@ -277,6 +172,18 @@ class SegmentManager
             ],
         ];
 
+        return $this->getSegmentsFromListEndpoint($uri, $options);
+    }
+
+    /**
+     * @param string $uri
+     * @param array  $options
+     *
+     * @return array
+     * @throws ApiException
+     */
+    private function getSegmentsFromListEndpoint(string $uri, array $options)
+    {
         $segments = [];
 
         try {
