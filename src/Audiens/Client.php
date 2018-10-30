@@ -17,7 +17,7 @@ class Client
      *
      * @const string
      */
-    public const VERSION = '1.0.0';
+    public const VERSION = '1.0.1';
 
     /**
      * URL for the AdForm API.
