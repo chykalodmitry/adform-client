@@ -41,7 +41,7 @@ class Segment implements JsonSerializable
     /** @var string|null */
     protected $extractionRule;
 
-    /** @var int|null */
+    /** @var bool|null */
     protected $audience;
 
     /** @var array|null */
@@ -201,12 +201,12 @@ class Segment implements JsonSerializable
         return $this;
     }
 
-    public function getAudience(): ?int
+    public function getAudience(): ?bool
     {
         return $this->audience;
     }
 
-    public function setAudience(string $audience): self
+    public function setAudience(bool $audience): self
     {
         $this->audience = $audience;
 
@@ -218,7 +218,7 @@ class Segment implements JsonSerializable
         return $this->audienceBySources;
     }
 
-    public function setAudienceBySources(string $audienceBySources): self
+    public function setAudienceBySources(array $audienceBySources): self
     {
         $this->audienceBySources = $audienceBySources;
 
@@ -230,7 +230,7 @@ class Segment implements JsonSerializable
         return $this->audienceByUserIdentityType;
     }
 
-    public function setAudienceByUserIdentityType(string $audienceByUserIdentityType): self
+    public function setAudienceByUserIdentityType(array $audienceByUserIdentityType): self
     {
         $this->audienceByUserIdentityType = $audienceByUserIdentityType;
 
@@ -330,19 +330,19 @@ class Segment implements JsonSerializable
             $json->extractionRule = $this->extractionRule;
         }
 
-        $json->audience = (bool)$this->audience;
+        $json->audience = (bool) $this->audience;
         $json->audienceBySources = $this->audienceBySources;
         $json->audienceByUserIdentityType = $this->audienceByUserIdentityType;
-        $json->isExtended = (bool)$this->isExtended;
+        $json->isExtended = (bool) $this->isExtended;
 
         // might not be set in JSON
         if ($this->extensionThreshold !== null) {
             $json->extensionThreshold = (bool)$this->extensionThreshold;
         }
 
-        $json->frequency = (int)$this->frequency;
-        $json->isCrossDevice = (bool)$this->isCrossDevice;
-        $json->hasDataUsagePermissions = (bool)$this->hasDataUsagePermissions;
+        $json->frequency = (int) $this->frequency;
+        $json->isCrossDevice = (bool) $this->isCrossDevice;
+        $json->hasDataUsagePermissions = (bool) $this->hasDataUsagePermissions;
 
         // might not be set for a new segment
         if ($this->createdAt !== null) {
