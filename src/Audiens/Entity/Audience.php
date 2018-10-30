@@ -55,7 +55,7 @@ class Audience implements JsonSerializable
         $obj = new stdClass();
 
         $obj->segmentId = $this->segmentId;
-        $obj->date = $obj->date ? $this->date->format('c'): null;
+        $obj->date = $this->date ? $this->date->format('c'): null;
         $obj->total = $this->total;
 
         return $obj;
