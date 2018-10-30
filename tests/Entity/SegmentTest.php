@@ -29,7 +29,8 @@ class SegmentTest extends TestCase
             ->setIsCrossDevice(false)
             ->setIsExtended(true)
             ->setRefId(Uuid::uuid4()->toString())
-            ->setTtl(55);
+            ->setTtl(55)
+            ->setUnifiedTaxonomyLabelIds([1,2,3]);
 
         $obj = $segment->jsonSerialize();
 
@@ -51,6 +52,7 @@ class SegmentTest extends TestCase
         TestCase::assertObjectHasAttribute('frequency', $obj);
         TestCase::assertObjectHasAttribute('isCrossDevice', $obj);
         TestCase::assertObjectHasAttribute('hasDataUsagePermissions', $obj);
+        TestCase::assertObjectHasAttribute('unifiedTaxonomyLabelsIds', $obj);
         // Only way to have this is via the hydrator
         TestCase::assertObjectNotHasAttribute('createdAt', $obj);
         TestCase::assertObjectNotHasAttribute('updatedAt', $obj);
@@ -73,6 +75,7 @@ class SegmentTest extends TestCase
         TestCase::assertEquals($segment->getFrequency(), $obj->frequency);
         TestCase::assertEquals($segment->getIsCrossDevice(), $obj->isCrossDevice);
         TestCase::assertEquals($segment->getHasDataUsagePermissions(), $obj->hasDataUsagePermissions);
+        TestCase::assertEquals($segment->getUnifiedTaxonomyLabelIds(), $obj->unifiedTaxonomyLabelsIds);
     }
 
     public function test_jsonSerializeWillProduceACorrectPartialObject(): void
@@ -113,6 +116,7 @@ class SegmentTest extends TestCase
         TestCase::assertObjectHasAttribute('frequency', $obj);
         TestCase::assertObjectHasAttribute('isCrossDevice', $obj);
         TestCase::assertObjectHasAttribute('hasDataUsagePermissions', $obj);
+        TestCase::assertObjectNotHasAttribute('unifiedTaxonomyLabelsIds', $obj);
         // Only way to have this is via the hydrator
         TestCase::assertObjectNotHasAttribute('createdAt', $obj);
         TestCase::assertObjectNotHasAttribute('updatedAt', $obj);
@@ -132,5 +136,20 @@ class SegmentTest extends TestCase
         TestCase::assertEquals($segment->getFrequency(), $obj->frequency);
         TestCase::assertEquals($segment->getIsCrossDevice(), $obj->isCrossDevice);
         TestCase::assertEquals($segment->getHasDataUsagePermissions(), $obj->hasDataUsagePermissions);
+    }
+
+    public function test_addUnifiedTaxonomyLabelIdWillAddTheSameIdOnlyOnce(): void
+    {
+        $segment = new Segment();
+        $unifiedId = 26;
+
+        for ($i = 0; $i < 5; $i++) {
+            $segment->addUnifiedTaxonomyLabelId($unifiedId);
+        }
+
+        $ids = $segment->getUnifiedTaxonomyLabelIds();
+        TestCase::assertCount(1, $ids);
+        [$id] = $ids;
+        TestCase::assertEquals($unifiedId, $id);
     }
 }

@@ -71,6 +71,14 @@ class Segment implements JsonSerializable
     /** @var DateTime|null */
     protected $createdAt;
 
+    /** @var int[] */
+    protected $unifiedTaxonomyLabelIds;
+
+    public function __construct()
+    {
+        $this->unifiedTaxonomyLabelIds = [];
+    }
+
     public function getUpdatedAt(): ?DateTime
     {
         return $this->updatedAt;
@@ -297,6 +305,35 @@ class Segment implements JsonSerializable
         return $this;
     }
 
+    /**
+     * @return int[]
+     */
+    public function getUnifiedTaxonomyLabelIds(): array
+    {
+        return $this->unifiedTaxonomyLabelIds;
+    }
+
+    /**
+     * @param int[] $unifiedTaxonomyLabelIds
+     *
+     * @return Segment
+     */
+    public function setUnifiedTaxonomyLabelIds(array $unifiedTaxonomyLabelIds): self
+    {
+        $this->unifiedTaxonomyLabelIds = $unifiedTaxonomyLabelIds;
+
+        return $this;
+    }
+
+    public function addUnifiedTaxonomyLabelId(int $unifiedTaxonomyLabelId): self
+    {
+        if (!\in_array($unifiedTaxonomyLabelId, $this->unifiedTaxonomyLabelIds, true)) {
+            $this->unifiedTaxonomyLabelIds[] = $unifiedTaxonomyLabelId;
+        }
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         $json = new \stdClass();
@@ -352,6 +389,10 @@ class Segment implements JsonSerializable
         // might not be set for a new segment
         if ($this->updatedAt !== null) {
             $json->updatedAt = $this->updatedAt->format('c');
+        }
+
+        if (!empty($this->unifiedTaxonomyLabelIds)) {
+            $json->unifiedTaxonomyLabelsIds = $this->unifiedTaxonomyLabelIds;
         }
 
         return $json;

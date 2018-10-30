@@ -53,6 +53,10 @@ class SegmentHydrator extends Segment
         $segment->updatedAt = new \DateTime($stdClass->updatedAt);
         $segment->createdAt = new \DateTime($stdClass->createdAt);
 
+        if (isset($stdClass->unifiedTaxonomyLabelsIds)) {
+            $segment->unifiedTaxonomyLabelIds = $stdClass->unifiedTaxonomyLabelsIds;
+        }
+
         return $segment;
     }
 }

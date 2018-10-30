@@ -23,8 +23,10 @@ class SegmentManagerTest extends TestCase
     /** @var Client */
     private $client;
 
+    /** @var Segment[] */
     private $fixtures = [];
 
+    /** @var Category[] */
     private $categoryFixtures = [];
 
     public function setUp()
@@ -34,17 +36,21 @@ class SegmentManagerTest extends TestCase
 
     public function tearDown()
     {
-        foreach ($this->fixtures as $fixture) {
+        foreach ($this->fixtures as $segment) {
             try {
-                $this->client->segments()->delete($fixture);
+                $this->client->segments()->delete($segment);
             } catch (\Exception $e) {
                 echo 'Segment delete error: ' .$e->getMessage()."\n";
             }
         }
 
-        foreach ($this->categoryFixtures as $fixture) {
+        foreach ($this->categoryFixtures as $category) {
             try {
-                $this->client->categories()->delete($fixture);
+                $categorySegments = $this->client->segments()->getItemsCategory($category->getId());
+                foreach ($categorySegments as $categorySegment) {
+                    $this->client->segments()->delete($categorySegment);
+                }
+                $this->client->categories()->delete($category);
             } catch (\Exception $e) {
                 echo 'Category delete error: ' .$e->getMessage()."\n";
             }
@@ -66,7 +72,7 @@ class SegmentManagerTest extends TestCase
         return $category;
     }
 
-    private function createFixture($addTearDown = true): Segment
+    private function createFixture($addTearDown = true, $taxonomyUnifiedLabelIds = []): Segment
     {
         $name = Uuid::uuid4()->toString();
 
@@ -81,6 +87,11 @@ class SegmentManagerTest extends TestCase
             ->setFrequency(5)
             ->setRefId(strtolower($name))
             ->setFee(0.6);
+
+        if (!empty($taxonomyUnifiedLabelIds)) {
+            $segment->setUnifiedTaxonomyLabelIds($taxonomyUnifiedLabelIds);
+        }
+
         $segment = $this->client->segments()->create($segment);
 
         if ($addTearDown) {
@@ -523,9 +534,6 @@ class SegmentManagerTest extends TestCase
         TestCase::assertTrue($status);
     }
 
-    /**
-     * @test
-     */
     public function test_deleteWillThrowApiException(): void
     {
         $this->expectException(ApiException::class);
@@ -533,5 +541,51 @@ class SegmentManagerTest extends TestCase
         $segment = new Segment();
 
         $this->client->segments()->delete($segment);
+    }
+
+    public function test_createWillSaveTheUnifiedTaxonomyLabelIds(): void
+    {
+        $unifiedTaxonomyLabelIds = [1, 2, 3];
+        $segment = $this->createFixture(false, $unifiedTaxonomyLabelIds);
+        TestCase::assertNotNull(
+            $segment->getId(),
+            'Giving the taxonomy label ids should, create should save without errors'
+        );
+
+        TestCase::assertEquals(
+            $unifiedTaxonomyLabelIds,
+            $segment->getUnifiedTaxonomyLabelIds(),
+            'Giving the taxonomy label ids should, create should persist the data'
+        );
+    }
+
+    public function test_updateWillSaveTheUnifiedTaxonomyLabelIds(): void
+    {
+        $unifiedTaxonomyLabelIds = [1, 2, 3];
+        $addedUnifiedTaxonomyLabelIds = [4, 5];
+        $extendedUnifiedTaxonomyLabelIds = \array_merge($unifiedTaxonomyLabelIds, $addedUnifiedTaxonomyLabelIds);
+
+        $segment = $this->createFixture(false, $unifiedTaxonomyLabelIds);
+
+        // Add new label ids
+        foreach ($addedUnifiedTaxonomyLabelIds as $unifiedTaxonomyLabelId) {
+            $segment->addUnifiedTaxonomyLabelId($unifiedTaxonomyLabelId);
+        }
+        $segment = $this->client->segments()->update($segment);
+        TestCase::assertEquals(
+            $extendedUnifiedTaxonomyLabelIds,
+            $segment->getUnifiedTaxonomyLabelIds(),
+            'Adding new taxonomy label ids, the client should preserve the old ones, too'
+        );
+
+        // Remove a label id
+        array_pop($extendedUnifiedTaxonomyLabelIds);
+        $segment->setUnifiedTaxonomyLabelIds($extendedUnifiedTaxonomyLabelIds);
+        $segment = $this->client->segments()->update($segment);
+        TestCase::assertEquals(
+            $extendedUnifiedTaxonomyLabelIds,
+            $segment->getUnifiedTaxonomyLabelIds(),
+            'Setting a new taxonomy label id list, the client should not preserve the old ones'
+        );
     }
 }
