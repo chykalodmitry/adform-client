@@ -1,6 +1,6 @@
 <?php /** @noinspection PhpUnhandledExceptionInspection */
 
-namespace Audiens\AdForm\Tests\Entity;
+namespace Audiens\AdForm\Tests\Cache;
 
 use Audiens\AdForm\Cache\FileCache;
 use PHPUnit\Framework\TestCase;

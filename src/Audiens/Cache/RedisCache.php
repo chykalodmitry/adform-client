@@ -15,6 +15,8 @@ class RedisCache extends BaseCache implements CacheInterface
     private $ttl;
 
     /**
+     * TODO breaking change: move Predis\Client as dependency
+     *
      * @param array $config
      * @param int $ttl
      * @param string $prefix
@@ -65,9 +67,7 @@ class RedisCache extends BaseCache implements CacheInterface
     {
         $keys = $this->client->keys($this->prefix.strtolower($providerPrefix).'_*');
 
-        foreach ($keys as $key) {
-            $this->client->del($key);
-        }
+        $this->client->del($keys);
 
         return true;
     }
