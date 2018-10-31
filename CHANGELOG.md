@@ -1,3 +1,13 @@
+# Version 1.0.2
+
+## Breaking changes
+
+*n/a*
+
+## Changes
+
+- Added Unified Taxonomy Labels Ids for segments (create / update /read)
+
 # Version 1.0.1
 
 ## Breaking changes
