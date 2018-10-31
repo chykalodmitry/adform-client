@@ -1,7 +1,7 @@
 {
   "name": "audiens/adform-client",
   "description": "PHP client for adform API",
-  "version": "1.0.1",
+  "version": "1.0.2",
 
   "keywords": [
     "adform",
