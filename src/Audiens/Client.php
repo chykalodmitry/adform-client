@@ -36,16 +36,16 @@ class Client
     protected $cache;
 
     /** @var CategoryManager */
-    protected $categories;
+    protected static $categories;
 
     /** @var AudienceManager */
-    protected $audiences;
+    protected static $audiences;
 
     /** @var SegmentManager */
-    protected $segments;
+    protected static $segments;
 
     /** @var  AgencyManager */
-    protected $agencies;
+    protected static $agencies;
 
     /**
      * @var DataUsageManager
@@ -77,11 +77,11 @@ class Client
      */
     public function categories(): CategoryManager
     {
-        if ($this->categories === null) {
-            $this->categories = new CategoryManager($this->httpClient, $this->cache);
+        if (static::$categories === null) {
+            static::$categories = new CategoryManager($this->httpClient, $this->cache);
         }
 
-        return $this->categories;
+        return static::$categories;
     }
 
     /**
@@ -90,10 +90,10 @@ class Client
      */
     public function audience(): AudienceManager
     {
-        if ($this->audiences === null) {
-            $this->audiences = new AudienceManager($this->httpClient, $this->cache);
+        if (static::$audiences === null) {
+            static::$audiences = new AudienceManager($this->httpClient, $this->cache);
         }
-        return $this->audiences;
+        return static::$audiences;
     }
 
     /**
@@ -102,11 +102,11 @@ class Client
      */
     public function segments(): SegmentManager
     {
-        if ($this->segments === null) {
-            $this->segments = new SegmentManager($this->httpClient, $this->cache);
+        if (static::$segments === null) {
+            static::$segments = new SegmentManager($this->httpClient, $this->cache);
         }
 
-        return $this->segments;
+        return static::$segments;
     }
 
     /**
@@ -115,11 +115,11 @@ class Client
      */
     public function agencies(): AgencyManager
     {
-        if ($this->agencies === null) {
-            $this->agencies = new AgencyManager($this->httpClient, $this->cache);
+        if (static::$agencies === null) {
+            static::$agencies = new AgencyManager($this->httpClient, $this->cache);
         }
 
-        return $this->agencies;
+        return static::$agencies;
     }
 
     /**
