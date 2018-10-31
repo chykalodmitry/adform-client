@@ -3,7 +3,7 @@
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 [![Build Status](https://travis-ci.org/Audiens/adform-client.svg?branch=master)](https://travis-ci.org/Audiens/adform-client)
 [![Coverage Status](https://coveralls.io/repos/github/Audiens/adform-client/badge.svg?branch=master)](https://coveralls.io/github/Audiens/adform-client?branch=master)
-[![Maintainability](https://api.codeclimate.com/v1/badges/c3b755d4eed795e5476f/maintainability)](https://codeclimate.com/github/Audiens/adform-client/maintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/9be5218a12a58763c8aa/maintainability)](https://codeclimate.com/github/Audiens/adform-client/maintainability)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Audiens/adform-client/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Audiens/adform-client/?branch=master)
 
 
