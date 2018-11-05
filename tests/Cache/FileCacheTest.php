@@ -3,7 +3,9 @@
 namespace Audiens\AdForm\Tests\Cache;
 
 use Audiens\AdForm\Cache\FileCache;
+use League\Flysystem\Adapter\Local;
 use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\Uuid;
 
 class FileCacheTest extends TestCase
 {
@@ -12,9 +14,15 @@ class FileCacheTest extends TestCase
 
     public function setUp(): void
     {
-        $fileCache = new FileCache('.');
+        $this->fileCache = new FileCache('fandom');
+    }
 
-        $this->fileCache = $fileCache;
+    public function tearDown(): void
+    {
+        /** @var Local $adapter */
+        $adapter = $this->fileCache->getFilesystem()->getAdapter();
+        $root = $adapter->getPathPrefix();
+        \rmdir($root);
     }
 
     public function test_fileCacheWillStoreTheDataAndCanBeInvalidated(): void

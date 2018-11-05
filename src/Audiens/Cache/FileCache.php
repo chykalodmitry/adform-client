@@ -13,14 +13,23 @@ class FileCache extends BaseCache implements CacheInterface
     /** @var int */
     private $ttl;
 
-    public function __construct(string $path, int $ttl = 3600, string $prefix = 'adform_')
+    public function __construct(string $path, int $ttl = 3600)
     {
         parent::__construct($path);
+
+        if (!\in_array($path[0], ['.', '/'])) {
+            $path = sys_get_temp_dir().DIRECTORY_SEPARATOR.$path;
+        }
 
         $adapter = new Local($path);
         $this->filesystem = new Filesystem($adapter);
 
         $this->ttl = $ttl;
+    }
+
+    public function getFilesystem(): Filesystem
+    {
+        return $this->filesystem;
     }
 
     public function put(string $providerPrefix, string $uri, array $query, string $data): bool

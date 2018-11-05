@@ -30,8 +30,8 @@ class CategoryHydrator extends Category
             $category->parentId = (int)$stdClass->parentId;
         }
 
-        $category->updatedAt = new DateTime($stdClass->updatedAt);
-        $category->createdAt = new DateTime($stdClass->createdAt);
+        $category->updatedAt = DateParser::parse($stdClass->updatedAt);
+        $category->createdAt = DateParser::parse($stdClass->createdAt);
 
         return $category;
     }

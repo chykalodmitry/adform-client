@@ -27,7 +27,7 @@ class DataProviderAudienceHydrator extends DataProviderAudience
         $dataProviderAudience->unique = (int)$stdClass->unique;
         $dataProviderAudience->totalHits = (int)$stdClass->totalHits;
         $dataProviderAudience->uniqueHits = (int)$stdClass->uniqueHits;
-        $dataProviderAudience->date = new DateTime($stdClass->date);
+        $dataProviderAudience->date = DateParser::parse($stdClass->date);
 
         return $dataProviderAudience;
     }

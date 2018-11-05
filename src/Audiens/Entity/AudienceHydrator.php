@@ -2,6 +2,7 @@
 
 namespace Audiens\AdForm\Entity;
 
+use DateTime;
 use stdClass;
 
 /**
@@ -22,7 +23,7 @@ class AudienceHydrator extends Audience
         $audience = new Audience();
 
         $audience->segmentId = $stdClass->segmentId;
-        $audience->date = $stdClass->date;
+        $audience->date = DateParser::parse($stdClass->date);
         $audience->total = $stdClass->total;
 
         return $audience;

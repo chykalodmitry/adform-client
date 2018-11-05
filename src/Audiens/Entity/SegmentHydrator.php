@@ -50,8 +50,8 @@ class SegmentHydrator extends Segment
         $segment->isCrossDevice = (bool)$stdClass->isCrossDevice;
         $segment->hasDataUsagePermissions = (bool)$stdClass->hasDataUsagePermissions;
 
-        $segment->updatedAt = new \DateTime($stdClass->updatedAt);
-        $segment->createdAt = new \DateTime($stdClass->createdAt);
+        $segment->updatedAt = DateParser::parse($stdClass->updatedAt);
+        $segment->createdAt = DateParser::parse($stdClass->createdAt);
 
         if (isset($stdClass->unifiedTaxonomyLabelsIds)) {
             $segment->unifiedTaxonomyLabelIds = $stdClass->unifiedTaxonomyLabelsIds;
