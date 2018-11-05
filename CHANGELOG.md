@@ -1,3 +1,13 @@
+# Version 1.0.3
+
+## Breaking changes
+
+*n/a*
+
+## Changes
+
+- Properly manage date times during entity hydration
+
 # Version 1.0.2
 
 ## Breaking changes
