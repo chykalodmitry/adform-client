@@ -3,7 +3,6 @@
 namespace Audiens\AdForm\Manager;
 
 use Audiens\AdForm\Cache\CacheInterface;
-use Audiens\AdForm\Entity\Audience;
 use Audiens\AdForm\Entity\AudienceHydrator;
 use Audiens\AdForm\Exception\EntityNotFoundException;
 use Audiens\AdForm\HttpClient;
@@ -15,7 +14,7 @@ class AudienceManager
     /** @var HttpClient */
     protected $httpClient;
 
-    /** @var CacheInterface */
+    /** @var CacheInterface|null */
     protected $cache;
 
     /** @var string */
@@ -29,12 +28,7 @@ class AudienceManager
 
     /**
      * Return an array of Audience based on segment ID
-     *
-     * @param $segmentId
-     * @return Audience[]
-     * @throws EntityNotFoundException
-     * @throw RuntimeException if response is null
-     */
+     **/
     public function getItem($segmentId): ?array
     {
         // Endpoint URI

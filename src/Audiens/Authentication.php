@@ -10,7 +10,7 @@ use League\OAuth2\Client\Token\AccessToken;
 
 class Authentication
 {
-    /** @var AccessToken */
+    /** @var AccessToken|null */
     protected $accessToken;
 
     /** @var string */
@@ -19,20 +19,10 @@ class Authentication
     /** @var string */
     protected $password;
 
-    /**
-     * Class constructor
-     *
-     * @param string $username
-     * @param string $password
-     *
-     * @throws OauthException
-     */
     public function __construct(string $username, string $password)
     {
         $this->username = $username;
         $this->password = $password;
-
-        $this->authenticate();
     }
 
     /**
@@ -46,20 +36,25 @@ class Authentication
 
         // we are using a very simple password grant
         // AdForm doesn't even return a Refresh Token
-        $provider = new GenericProvider([
-            'clientId' => '',
-            'clientSecret' => '',
-            'redirectUri' => '',
-            'urlAuthorize' => '',
-            'urlAccessToken' => $urlAccessToken,
-            'urlResourceOwnerDetails' => ''
-        ]);
+        $provider = new GenericProvider(
+            [
+                'clientId' => '',
+                'clientSecret' => '',
+                'redirectUri' => '',
+                'urlAuthorize' => '',
+                'urlAccessToken' => $urlAccessToken,
+                'urlResourceOwnerDetails' => '',
+            ]
+        );
 
         try {
-            $this->accessToken = $provider->getAccessToken('password', [
-                'username' => $this->username,
-                'password' => $this->password
-            ]);
+            $this->accessToken = $provider->getAccessToken(
+                'password',
+                [
+                    'username' => $this->username,
+                    'password' => $this->password,
+                ]
+            );
         } catch (IdentityProviderException $e) {
             throw OauthException::connect($e->getMessage());
         }
@@ -67,19 +62,17 @@ class Authentication
 
     /**
      * Returns the Access Token, or try to re-authenticate if needed
-     *
-     * @return string
-     *
-     * @throws OauthException
      */
     public function getAccessToken(): string
     {
-        // maybe the token will expire in next 10 seconds
-        $expiryCutoff = new DateTime('+10 seconds');
+        $expiryCutoff = new DateTime('+10 seconds'); // Maybe the token will expire in next 10 seconds
 
-        // if the token expires try to re-authenticate
         if (!$this->accessToken || $this->getExpires() < $expiryCutoff->getTimestamp()) {
-            $this->authenticate();
+            $this->authenticate(); // If the token expires try to re-authenticate
+        }
+
+        if (!$this->accessToken) {
+            throw OauthException::connect('Cannot authenticate, token is null after request');
         }
 
         return $this->accessToken->getToken();
@@ -87,11 +80,13 @@ class Authentication
 
     /**
      * Returns the Expires timestamp of the Access Token
-     *
-     * @return int
      */
-    public function getExpires(): int
+    public function getExpires(): ?int
     {
+        if (!$this->accessToken) {
+            throw OauthException::connect('Cannot extract Expires as the token is empty');
+        }
+
         return $this->accessToken->getExpires();
     }
 }

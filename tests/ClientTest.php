@@ -1,6 +1,6 @@
-<?php /** @noinspection PhpUnhandledExceptionInspection */
+<?php 
 
-namespace Audiens\AdForm\Tests;
+namespace Tests;
 
 use Audiens\AdForm\Client;
 use Audiens\AdForm\Manager\SegmentManager;

@@ -1,0 +1,13 @@
+includes:
+    - ./vendor/phpstan/phpstan/conf/config.level1.neon
+    - ./vendor/phpstan/phpstan-deprecation-rules/rules.neon
+    - ./vendor/phpstan/phpstan-php-parser/extension.neon
+
+parameters:
+    ignoreErrors:
+        - '#.*Constant SANDBOX_PASSWORD not found.*#'
+        - '#.*Constant SANDBOX_USERNAME not found.*#'
+        - '#.*Constant SANDBOX_DATA_PROVIDER_ID not found.*#'
+
+
+

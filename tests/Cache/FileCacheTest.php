@@ -1,11 +1,10 @@
-<?php /** @noinspection PhpUnhandledExceptionInspection */
+<?php 
 
-namespace Audiens\AdForm\Tests\Cache;
+namespace Tests\Cache;
 
 use Audiens\AdForm\Cache\FileCache;
 use League\Flysystem\Adapter\Local;
 use PHPUnit\Framework\TestCase;
-use Ramsey\Uuid\Uuid;
 
 class FileCacheTest extends TestCase
 {

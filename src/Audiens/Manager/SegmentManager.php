@@ -16,7 +16,7 @@ class SegmentManager
     /** @var HttpClient */
     protected $httpClient;
 
-    /** @var CacheInterface */
+    /** @var CacheInterface|null */
     protected $cache;
 
     /** @var string */

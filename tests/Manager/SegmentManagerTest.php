@@ -1,12 +1,13 @@
-<?php /** @noinspection PhpUnhandledExceptionInspection */
+<?php 
 
-namespace Audiens\AdForm\Tests\Provider;
+namespace Tests\Manager;
 
 use Audiens\AdForm\Cache\CacheInterface;
 use Audiens\AdForm\Client;
 use Audiens\AdForm\Entity\Category;
 use Audiens\AdForm\Entity\Segment;
 use Audiens\AdForm\Enum\SegmentStatus;
+use Audiens\AdForm\Exception\ApiException;
 use Audiens\AdForm\Exception\EntityInvalidException;
 use Audiens\AdForm\HttpClient;
 use Audiens\AdForm\Manager\SegmentManager;
@@ -16,7 +17,6 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use Ramsey\Uuid\Uuid;
-use Audiens\AdForm\Exception\ApiException;
 
 class SegmentManagerTest extends TestCase
 {
@@ -40,7 +40,7 @@ class SegmentManagerTest extends TestCase
             try {
                 $this->client->segments()->delete($segment);
             } catch (\Exception $e) {
-                echo 'Segment delete error: ' .$e->getMessage()."\n";
+                echo 'Segment delete error: '.$e->getMessage()."\n";
             }
         }
 
@@ -52,10 +52,9 @@ class SegmentManagerTest extends TestCase
                 }
                 $this->client->categories()->delete($category);
             } catch (\Exception $e) {
-                echo 'Category delete error: ' .$e->getMessage()."\n";
+                echo 'Category delete error: '.$e->getMessage()."\n";
             }
         }
-
     }
 
     private function createCategoryFixture($addTearDown = true): Category
@@ -118,7 +117,7 @@ class SegmentManagerTest extends TestCase
         $httpClient = $this->prophesize(HttpClient::class);
 
         $segmentManager = new SegmentManager($httpClient->reveal(), $cache->reveal());
-        $foundSegment = $segmentManager->getItem($originalSegment->getId());
+        $foundSegment   = $segmentManager->getItem($originalSegment->getId());
 
         TestCase::assertJsonStringEqualsJsonString(
             \json_encode($originalSegment),
@@ -131,7 +130,7 @@ class SegmentManagerTest extends TestCase
      */
     public function test_getItemWillPutTheSegmentIntoTheCache(): void
     {
-        $originalSegment = $this->createFixture();
+        $originalSegment        = $this->createFixture();
         $encodedOriginalSegment = \json_encode($originalSegment);
 
         $uri = 'v1/segments/'.$originalSegment->getId();
@@ -160,7 +159,7 @@ class SegmentManagerTest extends TestCase
             ->shouldBeCalledTimes(1);
 
         $segmentManager = new SegmentManager($httpClient->reveal(), $cache->reveal());
-        $foundSegment = $segmentManager->getItem($originalSegment->getId());
+        $foundSegment   = $segmentManager->getItem($originalSegment->getId());
 
         TestCase::assertJsonStringEqualsJsonString(
             $encodedOriginalSegment,
@@ -181,7 +180,7 @@ class SegmentManagerTest extends TestCase
     {
         $segments = $this->client->segments()->getItems(1);
 
-        TestCase::assertInternalType('array', $segments);
+        TestCase::assertIsArray( $segments);
 
         [$segment] = $segments;
 
@@ -205,7 +204,7 @@ class SegmentManagerTest extends TestCase
         $httpClient = $this->prophesize(HttpClient::class);
 
         $segmentManager = new SegmentManager($httpClient->reveal(), $cache->reveal());
-        $foundSegments = $segmentManager->getItems();
+        $foundSegments  = $segmentManager->getItems();
 
         TestCase::assertJsonStringEqualsJsonString(
             \json_encode([$originalSegment]),
@@ -218,7 +217,7 @@ class SegmentManagerTest extends TestCase
      */
     public function test_getItemsWillPutTheSegmentsIntoTheCache(): void
     {
-        $originalSegment = $this->createFixture();
+        $originalSegment        = $this->createFixture();
         $encodedOriginalSegment = \json_encode([$originalSegment]);
 
         $uri = 'v1/segments';
@@ -247,7 +246,7 @@ class SegmentManagerTest extends TestCase
             ->shouldBeCalledTimes(1);
 
         $segmentManager = new SegmentManager($httpClient->reveal(), $cache->reveal());
-        $foundSegments = $segmentManager->getItems();
+        $foundSegments  = $segmentManager->getItems();
 
         TestCase::assertJsonStringEqualsJsonString(
             $encodedOriginalSegment,
@@ -259,7 +258,7 @@ class SegmentManagerTest extends TestCase
     {
         $segments = $this->client->segments()->getItemsDataProvider(SANDBOX_DATA_PROVIDER_ID, 1);
 
-        TestCase::assertInternalType('array', $segments);
+        TestCase::assertIsArray($segments);
 
         [$segment] = $segments;
 
@@ -272,7 +271,7 @@ class SegmentManagerTest extends TestCase
     public function test_getItemsDataProviderWillReturnACachedResponse(): void
     {
         $dataProviderId = 42;
-        $uri = "v1/dataproviders/$dataProviderId/segments";
+        $uri            = "v1/dataproviders/$dataProviderId/segments";
 
         $originalSegment = $this->createFixture();
 
@@ -286,7 +285,7 @@ class SegmentManagerTest extends TestCase
         $httpClient = $this->prophesize(HttpClient::class);
 
         $segmentManager = new SegmentManager($httpClient->reveal(), $cache->reveal());
-        $foundSegments = $segmentManager->getItemsDataProvider($dataProviderId);
+        $foundSegments  = $segmentManager->getItemsDataProvider($dataProviderId);
 
         TestCase::assertJsonStringEqualsJsonString(
             \json_encode([$originalSegment]),
@@ -299,11 +298,11 @@ class SegmentManagerTest extends TestCase
      */
     public function test_getItemsDataProviderWillPutTheSegmentsIntoTheCache(): void
     {
-        $originalSegment = $this->createFixture();
+        $originalSegment        = $this->createFixture();
         $encodedOriginalSegment = \json_encode([$originalSegment]);
 
         $dataProviderId = 42;
-        $uri = "v1/dataproviders/$dataProviderId/segments";
+        $uri            = "v1/dataproviders/$dataProviderId/segments";
 
         /** @var CacheInterface|ObjectProphecy $cache */
         $cache = $this->prophesize(CacheInterface::class);
@@ -329,7 +328,7 @@ class SegmentManagerTest extends TestCase
             ->shouldBeCalledTimes(1);
 
         $segmentManager = new SegmentManager($httpClient->reveal(), $cache->reveal());
-        $foundSegments = $segmentManager->getItemsDataProvider($dataProviderId);
+        $foundSegments  = $segmentManager->getItemsDataProvider($dataProviderId);
 
         TestCase::assertJsonStringEqualsJsonString(
             $encodedOriginalSegment,
@@ -343,7 +342,7 @@ class SegmentManagerTest extends TestCase
     public function test_getItemsCategoryWillReturnACachedResponse(): void
     {
         $categoryId = 42;
-        $uri = "v1/categories/$categoryId/segments";
+        $uri        = "v1/categories/$categoryId/segments";
 
         $originalSegment = $this->createFixture();
 
@@ -357,7 +356,7 @@ class SegmentManagerTest extends TestCase
         $httpClient = $this->prophesize(HttpClient::class);
 
         $segmentManager = new SegmentManager($httpClient->reveal(), $cache->reveal());
-        $foundSegments = $segmentManager->getItemsCategory($categoryId);
+        $foundSegments  = $segmentManager->getItemsCategory($categoryId);
 
         TestCase::assertJsonStringEqualsJsonString(
             \json_encode([$originalSegment]),
@@ -370,11 +369,11 @@ class SegmentManagerTest extends TestCase
      */
     public function test_getItemsCategoryWillPutTheSegmentsIntoTheCache(): void
     {
-        $originalSegment = $this->createFixture();
+        $originalSegment        = $this->createFixture();
         $encodedOriginalSegment = \json_encode([$originalSegment]);
 
         $categoryId = 42;
-        $uri = "v1/categories/$categoryId/segments";
+        $uri        = "v1/categories/$categoryId/segments";
 
         /** @var CacheInterface|ObjectProphecy $cache */
         $cache = $this->prophesize(CacheInterface::class);
@@ -400,7 +399,7 @@ class SegmentManagerTest extends TestCase
             ->shouldBeCalledTimes(1);
 
         $segmentManager = new SegmentManager($httpClient->reveal(), $cache->reveal());
-        $foundSegments = $segmentManager->getItemsCategory($categoryId);
+        $foundSegments  = $segmentManager->getItemsCategory($categoryId);
 
         TestCase::assertJsonStringEqualsJsonString(
             $encodedOriginalSegment,
@@ -414,7 +413,7 @@ class SegmentManagerTest extends TestCase
     public function test_getItemsDataConsumerWillReturnACachedResponse(): void
     {
         $dataConsumerId = 42;
-        $uri = "v1/dataconsumers/$dataConsumerId/segments";
+        $uri            = "v1/dataconsumers/$dataConsumerId/segments";
 
         $originalSegment = $this->createFixture();
 
@@ -428,7 +427,7 @@ class SegmentManagerTest extends TestCase
         $httpClient = $this->prophesize(HttpClient::class);
 
         $segmentManager = new SegmentManager($httpClient->reveal(), $cache->reveal());
-        $foundSegments = $segmentManager->getItemsDataConsumer($dataConsumerId);
+        $foundSegments  = $segmentManager->getItemsDataConsumer($dataConsumerId);
 
         TestCase::assertJsonStringEqualsJsonString(
             \json_encode([$originalSegment]),
@@ -441,11 +440,11 @@ class SegmentManagerTest extends TestCase
      */
     public function test_getItemsDataConsumerWillPutTheSegmentsIntoTheCache(): void
     {
-        $originalSegment = $this->createFixture();
+        $originalSegment        = $this->createFixture();
         $encodedOriginalSegment = \json_encode([$originalSegment]);
 
         $dataConsumerId = 42;
-        $uri = "v1/dataconsumers/$dataConsumerId/segments";
+        $uri            = "v1/dataconsumers/$dataConsumerId/segments";
 
         /** @var CacheInterface|ObjectProphecy $cache */
         $cache = $this->prophesize(CacheInterface::class);
@@ -471,7 +470,7 @@ class SegmentManagerTest extends TestCase
             ->shouldBeCalledTimes(1);
 
         $segmentManager = new SegmentManager($httpClient->reveal(), $cache->reveal());
-        $foundSegments = $segmentManager->getItemsDataConsumer($dataConsumerId);
+        $foundSegments  = $segmentManager->getItemsDataConsumer($dataConsumerId);
 
         TestCase::assertJsonStringEqualsJsonString(
             $encodedOriginalSegment,
@@ -479,13 +478,12 @@ class SegmentManagerTest extends TestCase
         );
     }
 
-
     public function test_getItemsCategoryWillReturnAnArrayOfSegments(): void
     {
-        $segment = $this->createFixture();
+        $segment  = $this->createFixture();
         $segments = $this->client->segments()->getItemsCategory($segment->getCategoryId(), 2);
 
-        TestCase::assertInternalType('array', $segments);
+        TestCase::assertIsArray($segments);
         TestCase::assertGreaterThanOrEqual(1, \count($segments));
 
         [$segmentCheck] = $segments;
@@ -546,7 +544,7 @@ class SegmentManagerTest extends TestCase
     public function test_createWillSaveTheUnifiedTaxonomyLabelIds(): void
     {
         $unifiedTaxonomyLabelIds = [1, 2, 3];
-        $segment = $this->createFixture(false, $unifiedTaxonomyLabelIds);
+        $segment                 = $this->createFixture(false, $unifiedTaxonomyLabelIds);
         TestCase::assertNotNull(
             $segment->getId(),
             'Giving the taxonomy label ids should, create should save without errors'
@@ -561,9 +559,9 @@ class SegmentManagerTest extends TestCase
 
     public function test_updateWillSaveTheUnifiedTaxonomyLabelIds(): void
     {
-        $unifiedTaxonomyLabelIds = [1, 2, 3];
-        $addedUnifiedTaxonomyLabelIds = [4, 5];
-        $extendedUnifiedTaxonomyLabelIds = \array_merge($unifiedTaxonomyLabelIds, $addedUnifiedTaxonomyLabelIds);
+        $unifiedTaxonomyLabelIds                 = ['1', '2', '3'];
+        $addedUnifiedTaxonomyLabelIds            = ['4', '5'];
+        $expectedExtendedUnifiedTaxonomyLabelIds = \array_merge($unifiedTaxonomyLabelIds, $addedUnifiedTaxonomyLabelIds);
 
         $segment = $this->createFixture(false, $unifiedTaxonomyLabelIds);
 
@@ -571,20 +569,30 @@ class SegmentManagerTest extends TestCase
         foreach ($addedUnifiedTaxonomyLabelIds as $unifiedTaxonomyLabelId) {
             $segment->addUnifiedTaxonomyLabelId($unifiedTaxonomyLabelId);
         }
+
+        $actualExtendedUnifiedTaxonomyLabelIds = $segment->getUnifiedTaxonomyLabelIds();
+        sort($expectedExtendedUnifiedTaxonomyLabelIds);
+        sort($actualExtendedUnifiedTaxonomyLabelIds);
+
         $segment = $this->client->segments()->update($segment);
         TestCase::assertEquals(
-            $extendedUnifiedTaxonomyLabelIds,
-            $segment->getUnifiedTaxonomyLabelIds(),
+            $expectedExtendedUnifiedTaxonomyLabelIds,
+            $actualExtendedUnifiedTaxonomyLabelIds,
             'Adding new taxonomy label ids, the client should preserve the old ones, too'
         );
 
         // Remove a label id
-        array_pop($extendedUnifiedTaxonomyLabelIds);
-        $segment->setUnifiedTaxonomyLabelIds($extendedUnifiedTaxonomyLabelIds);
+        array_pop($expectedExtendedUnifiedTaxonomyLabelIds);
+        $segment->setUnifiedTaxonomyLabelIds($expectedExtendedUnifiedTaxonomyLabelIds);
         $segment = $this->client->segments()->update($segment);
+
+        $actualExtendedUnifiedTaxonomyLabelIds = $segment->getUnifiedTaxonomyLabelIds();
+        sort($expectedExtendedUnifiedTaxonomyLabelIds);
+        sort($actualExtendedUnifiedTaxonomyLabelIds);
+
         TestCase::assertEquals(
-            $extendedUnifiedTaxonomyLabelIds,
-            $segment->getUnifiedTaxonomyLabelIds(),
+            $expectedExtendedUnifiedTaxonomyLabelIds,
+            $actualExtendedUnifiedTaxonomyLabelIds,
             'Setting a new taxonomy label id list, the client should not preserve the old ones'
         );
     }

@@ -1,6 +1,6 @@
-<?php /** @noinspection PhpUnhandledExceptionInspection */
+<?php 
 
-namespace Audiens\AdForm\Tests\Manager;
+namespace Tests\Manager;
 
 use Audiens\AdForm\Client;
 use Audiens\AdForm\Entity\Category;
@@ -59,7 +59,7 @@ class CategoryManagerTest extends TestCase
     {
         $categories = $this->client->categories()->getItems(1);
 
-        TestCase::assertInternalType('array', $categories);
+        TestCase::assertIsArray( $categories);
 
         [$category] = $categories;
 
@@ -70,7 +70,7 @@ class CategoryManagerTest extends TestCase
     {
         $categories = $this->client->categories()->getItemsDataProvider(SANDBOX_DATA_PROVIDER_ID, 1);
 
-        TestCase::assertInternalType('array', $categories);
+        TestCase::assertIsArray( $categories);
 
         [$category] = $categories;
 

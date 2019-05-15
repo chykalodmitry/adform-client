@@ -1,6 +1,6 @@
-<?php /** @noinspection PhpUnhandledExceptionInspection */
+<?php 
 
-namespace Audiens\AdForm\Tests\Manager;
+namespace Tests\Manager;
 
 use Audiens\AdForm\Client;
 use Audiens\AdForm\Entity\Agency;
@@ -34,7 +34,7 @@ class AgencyManagerTest extends TestCase
     {
         $agencies = $this->client->agencies()->getItems(1);
 
-        TestCase::assertInternalType('array', $agencies);
+        TestCase::assertIsArray( $agencies);
 
         [$agency] = $agencies;
 
@@ -45,7 +45,7 @@ class AgencyManagerTest extends TestCase
     {
         $agencies = $this->client->agencies()->getItemsDataProvider(SANDBOX_DATA_PROVIDER_ID, 1);
 
-        TestCase::assertInternalType('array', $agencies);
+        TestCase::assertIsArray( $agencies);
 
         [$agency] = $agencies;
 

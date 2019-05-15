@@ -19,11 +19,7 @@ class Client
      */
     public const VERSION = '1.0.1';
 
-    /**
-     * URL for the AdForm API.
-     *
-     * @const string
-     */
+    /** @var string  */
     public const BASE_URL = 'https://dmp-api.adform.com';
 
     /** @var Authentication */
@@ -32,7 +28,7 @@ class Client
     /** @var HttpClient */
     protected $httpClient;
 
-    /** @var CacheInterface */
+    /** @var CacheInterface|null */
     protected $cache;
 
     /** @var CategoryManager */
@@ -47,28 +43,18 @@ class Client
     /** @var  AgencyManager */
     protected static $agencies;
 
-    /**
-     * @var DataUsageManager
-     */
+    /**  @var DataUsageManager */
     protected $dataUsage;
 
     /** @var DataProviderAudienceManager */
     protected $dataProviderAudience;
 
-    /**
-     * Constructor.
-     *
-     * @param string              $username
-     * @param string              $password
-     * @param CacheInterface|null $cache
-     *
-     * @throws Exception\OauthException
-     */
+
     public function __construct($username, $password, CacheInterface $cache = null)
     {
-        $this->auth = new Authentication($username, $password);
+        $this->auth       = new Authentication($username, $password);
         $this->httpClient = new HttpClient($this->auth);
-        $this->cache = $cache;
+        $this->cache      = $cache;
     }
 
     /**
@@ -86,19 +72,18 @@ class Client
 
     /**
      * A proxy method for working with categories
-     * @return AudienceManager
      */
     public function audience(): AudienceManager
     {
         if (static::$audiences === null) {
             static::$audiences = new AudienceManager($this->httpClient, $this->cache);
         }
+
         return static::$audiences;
     }
 
     /**
      * A proxy method for working with segments
-     * @return SegmentManager
      */
     public function segments(): SegmentManager
     {
@@ -111,7 +96,6 @@ class Client
 
     /**
      * A proxy method for working with agencies
-     * @return AgencyManager
      */
     public function agencies(): AgencyManager
     {
@@ -124,7 +108,6 @@ class Client
 
     /**
      * A proxy method for working with data usage reports
-     * @return DataUsageManager
      */
     public function dataUsage(): DataUsageManager
     {
@@ -137,7 +120,6 @@ class Client
 
     /**
      * A proxy method for working with data provider audience reports
-     * @return DataProviderAudienceManager
      */
     public function dataProviderAudience(): DataProviderAudienceManager
     {
