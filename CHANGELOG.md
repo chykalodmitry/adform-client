@@ -1,43 +1,37 @@
-# Version 1.0.3
+# Changelog
+All notable changes to this project will be documented in this file.
 
-## Breaking changes
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-*n/a*
+## [1.0.3] - 2018/11/05
 
-## Changes
+## Changed
 
 - Properly manage date times during entity hydration
 
-# Version 1.0.2
+## [1.0.2] - 2018/10/31
 
-## Breaking changes
+## Added
 
-*n/a*
+- Unified Taxonomy Labels Ids for segments (create / update /read)
 
-## Changes
+## [1.0.1] - 2018/10/31
 
-- Added Unified Taxonomy Labels Ids for segments (create / update /read)
+## Added
 
-# Version 1.0.1
+- more tests to various parts of the library
 
-## Breaking changes
+## Changed
 
-*n/a*
+- Some entity getter/setter types
 
-## Changes
+# [1.0.0] - 2018/10/30
 
-- Added more tests to various parts of the library
-- Fixed some entity getter/setter types
-
-# Version 1.0.0
-
-## Breaking changes
+## Changed
 
 - Platform requirement PHP >= 7.1
 - `Audiens\AdForm\Provider\*Provider` => `Audiens\AdForm\Manager\*Manager`
-
-## Changes
-
 - Updated the requirements to their latest versions
 - Updated PHPUnit to v7.4
 - Strict types across all the library

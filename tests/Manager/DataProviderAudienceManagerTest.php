@@ -1,6 +1,6 @@
-<?php /** @noinspection PhpUnhandledExceptionInspection */
+<?php 
 
-namespace Audiens\AdForm\Tests\Provider;
+namespace Tests\Manager;
 
 use Audiens\AdForm\Client;
 use Audiens\AdForm\Entity\DataProviderAudience;
@@ -24,7 +24,7 @@ class DataProviderAudienceManagerTest extends TestCase
         $groupBy = ['segment'];
         $dataProviderAudiences = $this->client->dataProviderAudience()->get(SANDBOX_DATA_PROVIDER_ID, $from, $to, $groupBy);
 
-        TestCase::assertInternalType('array', $dataProviderAudiences);
+        TestCase::assertIsArray( $dataProviderAudiences);
 
         if (\count($dataProviderAudiences) > 0) {
             [$dataProviderAudience] = $dataProviderAudiences;

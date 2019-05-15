@@ -1,6 +1,6 @@
-<?php /** @noinspection PhpUnhandledExceptionInspection */
+<?php 
 
-namespace Audiens\AdForm\Tests\Entity;
+namespace Tests\Entity;
 
 use Audiens\AdForm\Entity\Agency;
 use Audiens\AdForm\Entity\AgencyHydrator;

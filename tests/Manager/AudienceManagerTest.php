@@ -1,6 +1,6 @@
-<?php /** @noinspection PhpUnhandledExceptionInspection */
+<?php 
 
-namespace Audiens\AdForm\Tests\Manager;
+namespace Tests\Manager;
 
 use Audiens\AdForm\Client;
 use Audiens\AdForm\Entity\Audience;
@@ -28,7 +28,7 @@ class AudienceManagerTest extends TestCase
 
         TestCase::assertNotEmpty($items);
 
-        TestCase::assertInternalType('array', $items);
+        TestCase::assertIsArray( $items);
 
         TestCase::assertGreaterThan(0, \count($items));
 

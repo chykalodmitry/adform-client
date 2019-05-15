@@ -1,6 +1,6 @@
 <?php
 
-namespace Audiens\AdForm\Tests\Entity;
+namespace Tests\Entity;
 
 use Audiens\AdForm\Entity\DateParser;
 use DateTime;

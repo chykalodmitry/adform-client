@@ -1,6 +1,6 @@
-<?php /** @noinspection PhpUnhandledExceptionInspection */
+<?php 
 
-namespace Audiens\AdForm\Tests\Provider;
+namespace Tests\Manager;
 
 use Audiens\AdForm\Client;
 use DateTime;
@@ -23,6 +23,6 @@ class DataUsageManagerTest extends TestCase
         $groupBy = ['segment'];
         $dataUsage = $this->client->dataUsage()->get(SANDBOX_DATA_PROVIDER_ID, $from, $to, $groupBy);
 
-        TestCase::assertInternalType('array', $dataUsage);
+        TestCase::assertIsArray( $dataUsage);
     }
 }

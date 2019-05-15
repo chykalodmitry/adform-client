@@ -1,6 +1,6 @@
-<?php /** @noinspection PhpUnhandledExceptionInspection */
+<?php 
 
-namespace Audiens\AdForm\Tests;
+namespace Tests;
 
 use Audiens\AdForm\Authentication;
 use PHPUnit\Framework\TestCase;

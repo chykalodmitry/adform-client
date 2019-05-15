@@ -13,20 +13,24 @@ class HttpClient
     /** @var GuzzleClient */
     protected $guzzle;
 
+    /** @var string */
+    protected $accessToken = null;
+
     public function __construct($authentication, array $config = [])
     {
         $this->authentication = $authentication;
 
-        // Guzzle
-        $this->guzzle = new GuzzleClient([
-            'debug' => $config['debug'] ?? false,
-            'base_uri' => Client::BASE_URL,
-            'headers' => [
-                'User-Agent' => 'Audiens',
-                'Accept' => 'application/json',
-                'Content-type' => 'application/json',
-            ],
-        ]);
+        $this->guzzle = new GuzzleClient(
+            [
+                'debug' => $config['debug'] ?? false,
+                'base_uri' => Client::BASE_URL,
+                'headers' => [
+                    'User-Agent' => 'Audiens',
+                    'Accept' => 'application/json',
+                    'Content-type' => 'application/json',
+                ],
+            ]
+        );
     }
 
     public function get(string $uri, array $options = []): ResponseInterface
@@ -52,21 +56,10 @@ class HttpClient
     /**
      * Performs the actual request on the Guzzle instance
      * also injects the Oauth2 Access Token for each request
-     *
-     * @param string $method
-     * @param string $uri
-     * @param array  $options
-     *
-     * @return ResponseInterface
-     *
-     * @throws Exception\OauthException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function request(string $method, string $uri, array $options = []): ResponseInterface
     {
-        // inject Oauth2 Access Token on each request
-        // if it expires try to re-authenticate
-        $options['headers']['Authorization'] = 'Bearer '.$this->authentication->getAccessToken();
+        $options['headers']['Authorization'] = 'Bearer '.$this->authentication->getAccessToken(); // Inject Oauth2 Access Token on each request if it expires try to re-authenticate
 
         return $this->guzzle->request($method, $uri, $options);
     }
