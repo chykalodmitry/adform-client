@@ -77,22 +77,25 @@ class SegmentManager
      *
      * @param int $limit
      * @param int $offset
+     * @param array $options
      *
      * @throws ApiException if the API call fails
      *
      * @return Segment[]
      */
-    public function getItems(int $limit = 1000, int $offset = 0): array
+    public function getItems(int $limit = 1000, int $offset = 0, array $options = []): array
     {
         // Endpoint URI
         $uri = 'v1/segments';
 
-        $options = [
+        $safetyOptions = [
             'query' => [
                 'limit' => $limit,
                 'offset' => $offset,
             ],
         ];
+
+        $options = array_merge($options, $safetyOptions);
 
         return $this->getSegmentsFromListEndpoint($uri, $options);
     }
