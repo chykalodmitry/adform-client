@@ -30,7 +30,7 @@ class AudienceManagerTest extends TestCase
         $items = $this->client->audience()->getItem($segment->getId());
 
         TestCase::assertIsArray( $items);
-        
+
     }
 
 }
