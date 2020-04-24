@@ -1,11 +1,14 @@
-<?php 
+<?php
 
 namespace Tests\Manager;
 
 use Audiens\AdForm\Client;
 use Audiens\AdForm\Entity\Audience;
 use Audiens\AdForm\Entity\Segment;
+use Audiens\AdForm\HttpClient;
+use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 
 class AudienceManagerTest extends TestCase
 {
@@ -26,15 +29,8 @@ class AudienceManagerTest extends TestCase
 
         $items = $this->client->audience()->getItem($segment->getId());
 
-        TestCase::assertNotEmpty($items);
-
         TestCase::assertIsArray( $items);
-
-        TestCase::assertGreaterThan(0, \count($items));
-
-        foreach($items as $item) {
-            TestCase::assertInstanceOf(Audience::class, $item);
-        }
+        
     }
 
 }
