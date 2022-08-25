@@ -40,7 +40,7 @@ class CategoryManager
     public function getItem(int $categoryId): ?Category
     {
         // Endpoint URI
-        $uri = sprintf('v1/categories/%d', $categoryId);
+        $uri = sprintf('v1/dmp/categories/%d', $categoryId);
 
         try {
             $data = null;
@@ -85,7 +85,7 @@ class CategoryManager
     public function getItems(int $limit = 1000, int $offset = 0): array
     {
         // Endpoint URI
-        $uri = 'v1/categories';
+        $uri = 'v1/dmp/categories';
 
         $options = [
             'query' => [
@@ -139,7 +139,7 @@ class CategoryManager
     public function getItemsDataProvider(int $dataProviderId, int $limit = 1000, int $offset = 0): array
     {
         // Endpoint URI
-        $uri = sprintf('v1/dataproviders/%d/categories', $dataProviderId);
+        $uri = sprintf('v1/dmp/dataproviders/%d/categories', $dataProviderId);
 
         $options = [
             'query' => [
@@ -193,7 +193,7 @@ class CategoryManager
     public function getItemsDataConsumer(int $dataConsumerId, int $limit = 1000, int $offset = 0): array
     {
         // Endpoint URI
-        $uri = sprintf('v1/dataconsumers/%d/categories', $dataConsumerId);
+        $uri = sprintf('v1/dmp/dataconsumers/%d/categories', $dataConsumerId);
 
         $options = [
             'query' => [
@@ -246,7 +246,7 @@ class CategoryManager
     public function create(Category $category): Category
     {
         // Endpoint URI
-        $uri = 'v1/categories';
+        $uri = 'v1/dmp/categories';
 
         $options = [
             'json' => $category,
@@ -281,7 +281,7 @@ class CategoryManager
     public function update(Category $category): Category
     {
         // Endpoint URI
-        $uri = sprintf('v1/categories/%d', $category->getId());
+        $uri = sprintf('v1/dmp/categories/%d', $category->getId());
 
         $options = [
             'json' => $category,
@@ -315,7 +315,7 @@ class CategoryManager
     public function delete(Category $category): bool
     {
         // Endpoint URI
-        $uri = sprintf('v1/categories/%d', $category->getId());
+        $uri = sprintf('v1/dmp/categories/%d', $category->getId());
 
         try {
             $this->httpClient->delete($uri);

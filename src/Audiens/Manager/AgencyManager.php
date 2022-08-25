@@ -41,7 +41,7 @@ class AgencyManager
     public function getItem(int $agencyId): Agency
     {
         // Endpoint URI
-        $uri = sprintf('v1/agencies/%d', $agencyId);
+        $uri = sprintf('v1/dmp/agencies/%d', $agencyId);
 
         try {
             $data = null;
@@ -89,7 +89,7 @@ class AgencyManager
     public function getItems(int $limit = 1000, int $offset = 0, ?bool $active = null, ?int $countryId = null): array
     {
         // Endpoint URI
-        $uri = 'v1/agencies';
+        $uri = 'v1/dmp/agencies';
 
         $options = [
             'query' => [
@@ -156,7 +156,7 @@ class AgencyManager
     public function getItemsDataProvider(int $dataProviderId, int $limit = 1000, int $offset = 0, ?bool $active = null, ?int $countryId = null): array
     {
         // Endpoint URI
-        $uri = sprintf('v1/dataproviders/%d/agencies', $dataProviderId);
+        $uri = sprintf('v1/dmp/dataproviders/%d/agencies', $dataProviderId);
 
         $options = [
             'query' => [

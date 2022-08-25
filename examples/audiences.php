@@ -1,11 +1,12 @@
 <?php
 
-require '../vendor/autoload.php';
+require './vendor/autoload.php';
 
-$username = '{yourUsername}';
-$password = '{yourPassword}';
-$dataProviderId = '{yourDataProviderId}';
-
+$client_id = '{yourClientId}';
+$client_secret = '{yourClientSecret}';
+$scopes = [
+    "{yourScopes}"
+];
 // create the API client instance
 try {
     $redisConfig = [
@@ -14,8 +15,7 @@ try {
         'port' => 6379,
     ];
     $cache = new Audiens\AdForm\Cache\RedisCache($redisConfig);
-    $adform = new Audiens\AdForm\Client($username, $password, $cache);
-
+    $adform = new Audiens\AdForm\Client($client_id, $client_secret, $scopes, $cache);
 } catch (Audiens\AdForm\Exception\OauthException $e) {
     exit($e->getMessage());
 }

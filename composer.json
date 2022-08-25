@@ -1,5 +1,5 @@
 {
-  "name": "audiens/adform-client",
+  "name": "chykalodmitry/adform-client",
   "description": "PHP client for adform API",
 
   "keywords": [
@@ -10,7 +10,7 @@
   ],
 
   "type": "library",
-  "homepage": "https://github.com/Audiens/adform-client",
+  "homepage": "https://github.com/chykalodmitry/adform-client",
   "license": "MIT",
 
   "authors": [
@@ -25,6 +25,10 @@
     {
       "name": "Giacomo Furlan",
       "homepage": "https://giacomofurlan.name/"
+    },
+    {
+      "name": "Dmytro Chykalo",
+      "homepage": "https://github.com/chykalodmitry"
     }
   ],
 

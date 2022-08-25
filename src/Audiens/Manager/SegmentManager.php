@@ -40,7 +40,7 @@ class SegmentManager
     public function getItem($segmentId): Segment
     {
         // Endpoint URI
-        $uri = sprintf('v1/segments/%d', $segmentId);
+        $uri = sprintf('v1/dmp/segments/%d', $segmentId);
 
         try {
             $data = null;
@@ -86,7 +86,7 @@ class SegmentManager
     public function getItems(int $limit = 1000, int $offset = 0, array $options = []): array
     {
         // Endpoint URI
-        $uri = 'v1/segments';
+        $uri = 'v1/dmp/segments';
 
         $safetyOptions = [
             'query' => [
@@ -114,7 +114,7 @@ class SegmentManager
     public function getItemsDataProvider(int $dataProviderId, int $limit = 1000, int $offset = 0): array
     {
         // Endpoint URI
-        $uri = sprintf('v1/dataproviders/%d/segments', $dataProviderId);
+        $uri = sprintf('v1/dmp/dataproviders/%d/segments', $dataProviderId);
 
         $options = [
             'query' => [
@@ -140,7 +140,7 @@ class SegmentManager
     public function getItemsCategory(int $categoryId, int $limit = 1000, int $offset = 0): array
     {
         // Endpoint URI
-        $uri = sprintf('v1/categories/%d/segments', $categoryId);
+        $uri = sprintf('v1/dmp/categories/%d/segments', $categoryId);
 
         $options = [
             'query' => [
@@ -166,7 +166,7 @@ class SegmentManager
     public function getItemsDataConsumer(int $dataConsumerId, int $limit = 1000, int $offset = 0): array
     {
         // Endpoint URI
-        $uri = sprintf('v1/dataconsumers/%d/segments', $dataConsumerId);
+        $uri = sprintf('v1/dmp/dataconsumers/%d/segments', $dataConsumerId);
 
         $options = [
             'query' => [
@@ -238,7 +238,7 @@ class SegmentManager
     public function create(Segment $segment): Segment
     {
         // Endpoint URI
-        $uri = 'v1/segments';
+        $uri = 'v1/dmp/segments';
 
         $options = [
             'json' => $segment,
@@ -273,7 +273,7 @@ class SegmentManager
     public function update(Segment $segment): Segment
     {
         // Endpoint URI
-        $uri = sprintf('v1/segments/%d', $segment->getId());
+        $uri = sprintf('v1/dmp/segments/%d', $segment->getId());
 
         $options = [
             'json' => $segment,
@@ -307,7 +307,7 @@ class SegmentManager
     public function delete(Segment $segment): bool
     {
         // Endpoint URI
-        $uri = sprintf('v1/segments/%d', $segment->getId());
+        $uri = sprintf('v1/dmp/segments/%d', $segment->getId());
 
         try {
 

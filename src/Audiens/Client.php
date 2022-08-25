@@ -6,8 +6,8 @@ use Audiens\AdForm\Cache\CacheInterface;
 use Audiens\AdForm\Manager\AgencyManager;
 use Audiens\AdForm\Manager\AudienceManager;
 use Audiens\AdForm\Manager\CategoryManager;
-use Audiens\AdForm\Manager\DataProviderAudienceManager;
-use Audiens\AdForm\Manager\DataUsageManager;
+use Audiens\AdForm\Manager\ReportDataProviderAudienceManager;
+use Audiens\AdForm\Manager\ReportDataUsageManager;
 use Audiens\AdForm\Manager\SegmentManager;
 
 class Client
@@ -17,10 +17,10 @@ class Client
      *
      * @const string
      */
-    public const VERSION = '1.0.1';
+    public const VERSION = '1.2.0';
 
     /** @var string  */
-    public const BASE_URL = 'https://dmp-api.adform.com';
+    public const BASE_URL = 'https://api.adform.com';
 
     /** @var Authentication */
     protected $auth;
@@ -43,16 +43,16 @@ class Client
     /** @var  AgencyManager */
     protected static $agencies;
 
-    /**  @var DataUsageManager */
+    /**  @var ReportDataUsageManager */
     protected $dataUsage;
 
-    /** @var DataProviderAudienceManager */
+    /** @var ReportDataProviderAudienceManager */
     protected $dataProviderAudience;
 
 
-    public function __construct($username, $password, CacheInterface $cache = null)
+    public function __construct($client_id, $client_secret, $scopes, CacheInterface $cache = null)
     {
-        $this->auth       = new Authentication($username, $password);
+        $this->auth       = new Authentication($client_id, $client_secret, $scopes);
         $this->httpClient = new HttpClient($this->auth);
         $this->cache      = $cache;
     }
@@ -109,10 +109,10 @@ class Client
     /**
      * A proxy method for working with data usage reports
      */
-    public function dataUsage(): DataUsageManager
+    public function dataUsage(): ReportDataUsageManager
     {
         if ($this->dataUsage === null) {
-            $this->dataUsage = new DataUsageManager($this->httpClient, $this->cache);
+            $this->dataUsage = new ReportDataUsageManager($this->httpClient, $this->cache);
         }
 
         return $this->dataUsage;
@@ -121,10 +121,10 @@ class Client
     /**
      * A proxy method for working with data provider audience reports
      */
-    public function dataProviderAudience(): DataProviderAudienceManager
+    public function dataProviderAudience(): ReportDataProviderAudienceManager
     {
         if ($this->dataProviderAudience === null) {
-            $this->dataProviderAudience = new DataProviderAudienceManager($this->httpClient, $this->cache);
+            $this->dataProviderAudience = new ReportDataProviderAudienceManager($this->httpClient, $this->cache);
         }
 
         return $this->dataProviderAudience;

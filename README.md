@@ -1,39 +1,31 @@
 # adform-client
 
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
-[![Build Status](https://travis-ci.org/Audiens/adform-client.svg?branch=master)](https://travis-ci.org/Audiens/adform-client)
-[![Coverage Status](https://coveralls.io/repos/github/Audiens/adform-client/badge.svg?branch=master)](https://coveralls.io/github/Audiens/adform-client?branch=master)
-[![Maintainability](https://api.codeclimate.com/v1/badges/9be5218a12a58763c8aa/maintainability)](https://codeclimate.com/github/Audiens/adform-client/maintainability)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Audiens/adform-client/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Audiens/adform-client/?branch=master)
 
-
-A PHP client library for [AdForm's DMP API](https://dmp.adform.com/help/).
-
-# Installation Using [Composer](http://getcomposer.org/)
-
-```bash
-$ composer require Audiens/adform-client
-```
+A PHP client library for [AdForm's API (DMP)](https://api.adform.com/v1/help/dmp).
 
 # Available endpoints
 
 The current implementation covers the following endpoints:
-* [Segments](https://dmp.adform.com/Help#data_provider_segments_service)
-* [Categories](https://dmp.adform.com/Help#data_provider_categories_service)
-* [Data usage report](https://dmp.adform.com/Help#reports_service)
-* [Data Provider Audience report](https://dmp.adform.com/Help#reports_service)
-* [Agencies](https://dmp.adform.com/Help#agency_service)
+* [Segments](https://api.adform.com/v1/help/dmp#/Segment)
+* [Categories](https://api.adform.com/v1/help/dmp#/Category)
+* [Data usage report](https://api.adform.com/v1/help/dmp#/Report)
+* [Data Provider Audience report](https://api.adform.com/v1/help/dmp#/Report)
+* [Agencies](https://api.adform.com/v1/help/dmp#/Agency)
 
 # Usage
 
 ```php
 require 'vendor/autoload.php';
 
-$username = '{yourUsername}';
-$password = '{yourPassword}';
+$client_id = '{yourClientId}';
+$client_secret = '{yourClientSecret}';
+$scopes = [
+    "{yourScopes}"
+];
 
 try {
-    $adform = new Audiens\AdForm\Client($username, $password);
+    $adform = new Audiens\AdForm\Client($client_id, $client_secret, $scopes);
 } catch (Audiens\AdForm\Exception\OauthException $e) {
     exit("Auth failed with message: ".$e->getMessage());
 }
@@ -61,8 +53,11 @@ The package has an optional ability to cache the API call locally. Two cache dri
 ```php
 require 'vendor/autoload.php';
 
-$username = '{yourUsername}';
-$password = '{yourPassword}';
+$client_id = '{yourClientId}';
+$client_secret = '{yourClientSecret}';
+$scopes = [
+    "{yourScopes}"
+];
 
 // Redis driver
 try {
@@ -72,7 +67,7 @@ try {
         'port' => 6379,
     ];
     $cacheRedis = new Audiens\AdForm\Cache\RedisCache($redisConfig);
-    $adformRedis = new Audiens\AdForm\Client($username, $password, $cacheRedis);
+    $adformRedis = new Audiens\AdForm\Client($client_id, $client_secret, $scopes, $cacheRedis);
 } catch (Audiens\AdForm\Exception\OauthException $e) {
     exit("Auth failed with message: ".$e->getMessage());
 }

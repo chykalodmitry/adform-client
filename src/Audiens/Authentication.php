@@ -3,26 +3,32 @@
 namespace Audiens\AdForm;
 
 use Audiens\AdForm\Exception\OauthException;
+use Audiens\AdForm\Provider\AdformProvider;
 use DateTime;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
-use League\OAuth2\Client\Provider\GenericProvider;
 use League\OAuth2\Client\Token\AccessToken;
 
 class Authentication
 {
+    /** @var string  */
+    public const AUTH_URL = 'https://id.adform.com/sts/connect/token';
+
     /** @var AccessToken|null */
     protected $accessToken;
 
     /** @var string */
-    protected $username;
+    protected $client_id;
 
     /** @var string */
-    protected $password;
+    protected $client_secret;
 
-    public function __construct(string $username, string $password)
+    protected $scopes;
+
+    public function __construct(string $client_id, string $client_secret, $scopes)
     {
-        $this->username = $username;
-        $this->password = $password;
+        $this->client_id = $client_id;
+        $this->client_secret = $client_secret;
+        $this->scopes = $scopes;
     }
 
     /**
@@ -32,29 +38,25 @@ class Authentication
      */
     public function authenticate(): void
     {
-        $urlAccessToken = Client::BASE_URL.'/v1/token';
+        $urlAccessToken = self::AUTH_URL;
 
         // we are using a very simple password grant
         // AdForm doesn't even return a Refresh Token
-        $provider = new GenericProvider(
+        $provider = new AdformProvider(
             [
-                'clientId' => '',
-                'clientSecret' => '',
+                'clientId' => $this->client_id,
+                'clientSecret' => $this->client_secret,
                 'redirectUri' => '',
                 'urlAuthorize' => '',
                 'urlAccessToken' => $urlAccessToken,
                 'urlResourceOwnerDetails' => '',
+                'scopes' => $this->scopes,
+                'scopeSeparator' => ' '
             ]
         );
 
         try {
-            $this->accessToken = $provider->getAccessToken(
-                'password',
-                [
-                    'username' => $this->username,
-                    'password' => $this->password,
-                ]
-            );
+            $this->accessToken = $provider->getAccessToken('client_credentials');
         } catch (IdentityProviderException $e) {
             throw OauthException::connect($e->getMessage());
         }

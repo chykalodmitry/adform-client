@@ -3,14 +3,12 @@
 namespace Audiens\AdForm\Manager;
 
 use Audiens\AdForm\Cache\CacheInterface;
-use Audiens\AdForm\Entity\DataProviderAudience;
-use Audiens\AdForm\Entity\DataProviderAudienceHydrator;
 use Audiens\AdForm\Exception\ApiException;
 use Audiens\AdForm\HttpClient;
 use DateTime;
 use GuzzleHttp\Exception\ClientException;
 
-class DataProviderAudienceManager
+class ReportDataUsageManager
 {
     /** @var HttpClient */
     protected $httpClient;
@@ -19,7 +17,7 @@ class DataProviderAudienceManager
     protected $cache;
 
     /** @var string */
-    protected $cachePrefix = 'data_provider_audience';
+    protected $cachePrefix = 'datausage';
 
     public function __construct(HttpClient $httpClient, CacheInterface $cache = null)
     {
@@ -28,30 +26,34 @@ class DataProviderAudienceManager
     }
 
     /**
-     * Returns an array of audience objects
+     * Returns an array of data usage objects
      *
-     * @param int      $dataProviderId
+     * @param int $dataProviderId
      * @param DateTime $from
      * @param DateTime $to
-     * @param array    $groupBy
+     * @param array $groupBy
+     * @param int $limit
+     * @param int $offset
      *
-     * @return DataProviderAudience[]
      * @throws ApiException if the API call fails
+     *
+     * @return array
      */
-    public function get(int $dataProviderId, DateTime $from, DateTime $to, array $groupBy): array
+    public function get(int $dataProviderId, DateTime $from, DateTime $to, array $groupBy, int $limit = 1000, int $offset = 0): array
     {
         // Endpoint URI
-        $uri = sprintf('v1/dataproviders/%d/audience', $dataProviderId);
+        $uri = 'v1/dmp/reports/datausage';
 
         $options = [
             'query' => [
+                'dataProviderId' => $dataProviderId,
                 'from' => $from->format('c'),
                 'to' => $to->format('c'),
                 'groupBy' => $groupBy,
+                'limit' => $limit,
+                'offset' => $offset,
             ],
         ];
-
-        $dataProviderAudiences = [];
 
         try {
             $data = null;
@@ -70,23 +72,17 @@ class DataProviderAudienceManager
                 }
             }
 
-            $classArray = \json_decode($data);
-
-            foreach ($classArray as $class) {
-                $dataProviderAudiences[] = DataProviderAudienceHydrator::fromStdClass($class);
-            }
+            return \json_decode($data);
         } catch (ClientException $e) {
             $response = $e->getResponse();
             if ($response === null) {
                 throw $e;
             }
-
             $responseBody = $response->getBody()->getContents();
             $responseCode = $response->getStatusCode();
 
             throw new ApiException($responseBody, $responseCode);
         }
 
-        return $dataProviderAudiences;
     }
 }

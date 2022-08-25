@@ -32,7 +32,7 @@ class AudienceManager
     public function getItem($segmentId): ?array
     {
         // Endpoint URI
-        $uri = sprintf('v2/segments/%s/audience/totals', $segmentId);
+        $uri = sprintf('v2/dmp/segments/%s/audience/totals', $segmentId);
 
         try {
             $data = null;
